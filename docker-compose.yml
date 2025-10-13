@@ -1,0 +1,14 @@
+version : '3.5'
+services:
+  mariadb:
+    image: mariadb
+    container_name: mtgdb-mariadb
+    environment:
+      MARIADB_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD}
+      MARIADB_USER: ${MARIADB_USER}
+      MARIADB_PASSWORD: ${MARIADB_PASSWORD}
+      MARIADB_DATABASE: ${MARIADB_DATABASE}
+    ports:
+      - "3306:3306"
+    volumes:
+      - "./schema.sql:/docker-entrypoint-initdb.d/1.sql"
