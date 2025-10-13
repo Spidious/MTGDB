@@ -8,7 +8,7 @@ using namespace std;
 
 int main()
 {
-	DBInterface db;
+	DBInterface db(DB_SQLITE, "test.db");
 	db.Execute("CREATE TABLE IF NOT EXISTS cards (id INTEGER PRIMARY KEY, name TEXT, mana_cost TEXT, type_line TEXT, oracle_text TEXT);");
 	return 0;
 }

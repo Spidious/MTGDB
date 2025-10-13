@@ -102,10 +102,26 @@ Close() {
 
 
 // Default constructor to initialize database connection
-DBInterface::DBInterface() {
+DBInterface::DBInterface(const int db_specifier, const char* uri) {
+	// Choose database connector based on db_specifier
+	if (db_specifier == DB_SQLITE) {
+		connector = new sqlite_connector();
+	}
+	else if (db_specifier == DB_MYSQL) {
+		connector = new mysql_connector();
+	}
+	else if (db_specifier == DB_MARIADB) {
+		connector = new mariadb_connector();
+	}
+	else {
+		// Invalid database specifier
+		throw invalid_argument("Invalid database specifier");
+	}
+
+	// Create connector and initialize connection
 	connector = new sqlite_connector();
-	if(!connector->Connect("test.db")) {
-		cerr << "Can't open database" << endl;
+	if(!connector->Connect(uri)) {
+		throw runtime_error("Failed to connect to database");
 	}
 }
 

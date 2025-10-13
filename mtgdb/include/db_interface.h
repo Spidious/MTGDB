@@ -47,7 +47,12 @@ class DBInterface {
 		/// TODO: Handle SQLite or MySQ	    L/MariaDB connections
 		/// TODO: Add connection parameters (host, user, password, dbname)
 		/// </summary>
-		DBInterface();
+		/// <param name="db_specifier">Specifier for database types DB_SQLITE, DB_MYSQL, DB_MARIADB</param>
+		/// <param name="uri">URI (or path) for database connection</param>
+		/// <returns>testing</returns>
+		/// <exception cref="std::invalid_argument">Thrown when an invalid database specifier is provided.</exception>
+		/// <exception cref="std::runtime_error">Thrown when the connection to the database fails.</exception>
+		DBInterface(const int db_specifier, const char* uri);
 
 		/// <summary>
 		/// Execute database commands
