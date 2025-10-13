@@ -102,6 +102,10 @@ class DBInterface {
 		};
 };
 
+#define DB_SQLITE 1
+#define DB_MYSQL 2
+#define DB_MARIADB 3
+
 #endif 
 
-// TODO: Reference additional headers your program requires here.
+

@@ -2,8 +2,16 @@
 
 using namespace std;
 
+/*
+#################################################
+# Abstract DatabaseConnector Implementation
+#################################################
+*/
+
+// Default implementation of Close (does nothing)
 void DatabaseConnector::Close() {}
 
+// Virtual destructor to ensure proper cleanup of derived classes
 DatabaseConnector::
 ~DatabaseConnector() {
 	Close();
@@ -16,25 +24,29 @@ DatabaseConnector::
 #################################################
 */
 
+// Constructor to initialize SQLite connection variables
 DBInterface::sqlite_connector::
 sqlite_connector() {
 	db = nullptr;
 	errMsg = nullptr;
-	int rc = 0;
+	rc = 0;
 }
 
+// Connect to SQLite database using the provided URI
 bool DBInterface::sqlite_connector::
 Connect(const char* uri) {
 	rc = sqlite3_open(uri, &db);
 	return(rc == SQLITE_OK);
 }
 
+// Execute SQL command on SQLite database
 bool DBInterface::sqlite_connector::
 Execute(const char* sql) {
 	rc = sqlite3_exec(db, sql, nullptr, nullptr, &errMsg);
 	return(rc == SQLITE_OK);
 }
 
+// Close SQLite database connection
 void DBInterface::sqlite_connector::
 Close() {
 	sqlite3_close(db);
@@ -48,16 +60,17 @@ Close() {
 
 bool DBInterface::mysql_connector::
 Connect(const char* uri) {
-	return true;
+	return true; // Placeholder implementation
 }
 
 bool DBInterface::mysql_connector::
 Execute(const char* sql) {
-	return true;
+	return true; // Placeholder implementation
 }
 
 void DBInterface::mysql_connector::
 Close() {
+	// Placeholder implementation
 }
 
 /*
@@ -68,16 +81,17 @@ Close() {
 
 bool DBInterface::mariadb_connector::
 Connect(const char* uri) {
-	return true;
+	return true; // Placeholder implementation
 }
 
 bool DBInterface::mariadb_connector::
 Execute(const char* sql) {
-	return true;
+	return true; // Placeholder implementation
 }
 
 void DBInterface::mariadb_connector::
 Close() {
+	// Placeholder implementation
 }
 
 /*
