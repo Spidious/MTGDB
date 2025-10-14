@@ -3,16 +3,23 @@
 #
 
 # Add source to this project's executable.
-add_executable (mtgdb "src/mtgdb.cpp" "include/mtgdb.h" "lib/db_interface.cpp" "include/db_interface.h")
+add_executable (mtgdb "src/mtgdb.cpp" "include/mtgdb.h")
 
 if (CMAKE_VERSION VERSION_GREATER 3.12)
   set_property(TARGET mtgdb PROPERTY CXX_STANDARD 20)
 endif()
 
-# Target libraries
-add_library(sqlite3 lib/sqlite3.c "lib/db_interface.cpp" "include/db_interface.h")
+# Link SQLite3 
+add_library(sqlite3 "lib/sqlite3.c")
 target_include_directories(sqlite3 PUBLIC include)
-target_link_libraries(mtgdb PRIVATE sqlite3)
+#Link DB interface
+add_library(db_interface lib/db_interface.cpp)
+target_include_directories(db_interface PUBLIC include)
+#Link Scryfall API Wrapper
+add_library(scryfall_api lib/scryfall_api.cpp)
+target_include_directories(scryfall_api PUBLIC include)
+# Link libraries to executable
+target_link_libraries(mtgdb PRIVATE sqlite3 db_interface scryfall_api)
 
 # SQL info
 configure_file(resources/schema.sql ${CMAKE_BINARY_DIR}/mtgdb/schema.sql COPYONLY)

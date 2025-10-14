@@ -2,13 +2,14 @@
 //
 
 #include "mtgdb.h"
-#include <db_interface.h>
 
 using namespace std;
 
 int main()
 {
+	// TODO: DB Type should be configurable by user.
+	// Open Database
 	DBInterface db(DB_SQLITE, "test.db");
-	db.Execute("CREATE TABLE IF NOT EXISTS cards (id INTEGER PRIMARY KEY, name TEXT, mana_cost TEXT, type_line TEXT, oracle_text TEXT);");
+	ScryfallAPI api;
 	return 0;
 }

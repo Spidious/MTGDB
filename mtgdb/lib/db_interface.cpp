@@ -20,6 +20,7 @@ Connect(const char* uri) {
 	rc = sqlite3_open_v2(uri, &db, SQLITE_OPEN_READWRITE, nullptr);
 	if (rc == SQLITE_CANTOPEN)
 	{
+		cout << "DB Doesn't exist" << endl;
 		// Create database
 		rc = sqlite3_open_v2(uri, &db, SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE, nullptr);
 		// Retrieve default schema
@@ -31,6 +32,7 @@ Connect(const char* uri) {
 		std::string schema((std::istreambuf_iterator<char>(schema_file)), std::istreambuf_iterator<char>());
 		// Execute schema
 		if (rc == SQLITE_OK) {
+			cout << "Executing Schema" << endl;
 			sqlite_connector::Execute(schema.c_str());
 			rc = SQLITE_OK; // Execute() causes this to change.
 		}
