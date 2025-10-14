@@ -1,23 +1,5 @@
 #include "db_interface.h"
-
 using namespace std;
-
-/*
-#################################################
-# Abstract DatabaseConnector Implementation
-#################################################
-*/
-
-// Default implementation of Close (does nothing)
-void DatabaseConnector::Close() {}
-
-// Virtual destructor to ensure proper cleanup of derived classes
-DatabaseConnector::
-~DatabaseConnector() {
-	Close();
-	cout << "DatabaseConnector destroyed" << endl;
-}
-
 /*
 #################################################
 # SQLite Connector Implementation
@@ -35,7 +17,24 @@ sqlite_connector() {
 // Connect to SQLite database using the provided URI
 bool DBInterface::sqlite_connector::
 Connect(const char* uri) {
-	rc = sqlite3_open(uri, &db);
+	rc = sqlite3_open_v2(uri, &db, SQLITE_OPEN_READWRITE, nullptr);
+	if (rc == SQLITE_CANTOPEN)
+	{
+		// Create database
+		rc = sqlite3_open_v2(uri, &db, SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE, nullptr);
+		// Retrieve default schema
+		fstream schema_file;
+		schema_file.open("schema.sql", ios::in); // TODO: Stop using hard-coded schema name
+		if (!schema_file.is_open()) {
+			cout << "Failed to open schema.sql\n";
+		}
+		std::string schema((std::istreambuf_iterator<char>(schema_file)), std::istreambuf_iterator<char>());
+		// Execute schema
+		if (rc == SQLITE_OK) {
+			sqlite_connector::Execute(schema.c_str());
+			rc = SQLITE_OK; // Execute() causes this to change.
+		}
+	}
 	return(rc == SQLITE_OK);
 }
 
@@ -46,10 +45,21 @@ Execute(const char* sql) {
 	return(rc == SQLITE_OK);
 }
 
+char* DBInterface::sqlite_connector::
+GetErr() const {
+	return errMsg;
+}
+
 // Close SQLite database connection
 void DBInterface::sqlite_connector::
 Close() {
 	sqlite3_close(db);
+}
+
+// Close DB connection when destroyed
+DBInterface::sqlite_connector::
+~sqlite_connector(){
+	sqlite_connector::Close();
 }
 
 /*
@@ -73,6 +83,12 @@ Close() {
 	// Placeholder implementation
 }
 
+// Close DB connection when destroyed
+DBInterface::mysql_connector::
+~mysql_connector(){
+	mysql_connector::Close();
+}
+
 /*
 #################################################
 # MariaDB Connector Implementation
@@ -94,12 +110,17 @@ Close() {
 	// Placeholder implementation
 }
 
+// Close DB connection when destroyed
+DBInterface::mariadb_connector::
+~mariadb_connector() {
+	mariadb_connector::Close();
+}
+
 /*
 #################################################
 # DBInterface Implementation
 #################################################
 */
-
 
 // Default constructor to initialize database connection
 DBInterface::DBInterface(const int db_specifier, const char* uri) {
@@ -119,7 +140,6 @@ DBInterface::DBInterface(const int db_specifier, const char* uri) {
 	}
 
 	// Create connector and initialize connection
-	connector = new sqlite_connector();
 	if(!connector->Connect(uri)) {
 		throw runtime_error("Failed to connect to database");
 	}
@@ -141,5 +161,4 @@ void DBInterface::Close() {
 DBInterface::~DBInterface() {
 	// Close database connection
 	Close();
-	cout << "Database connection closed!!!" << endl;
 }

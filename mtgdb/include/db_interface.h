@@ -6,6 +6,8 @@
 #pragma once
 #include <iostream>
 #include <sqlite3.h>
+#include <fstream>
+#include <sstream>
 
 /// <summary>
 /// Establishes a connection to a database using the specified URI.
@@ -29,10 +31,6 @@ class DatabaseConnector {
 		/// Closes the resource or connection associated with the object.
 		/// </summary>
 		virtual void Close() = 0;
-		/// <summary>
-		/// Destroys the DatabaseConnector object and releases any associated resources.
-		/// </summary>
-		virtual ~DatabaseConnector() = 0;
 };
 
 /// <summary>
@@ -83,7 +81,10 @@ class DBInterface {
 				sqlite_connector();
 				bool Connect(const char* uri) override;
 				bool Execute(const char* sql) override;
+				char* GetErr() const;
 				void Close() override;
+			private:
+				~sqlite_connector();
 		};
 		/// <summary>
 		/// Database Connector for MySQL
@@ -94,6 +95,8 @@ class DBInterface {
 				bool Connect(const char* uri) override;
 				bool Execute(const char* sql) override;
 				void Close() override;
+			private:
+				~mysql_connector();
 		};
 		/// <summary>
 		/// Database Connector for MariaDB
@@ -104,6 +107,8 @@ class DBInterface {
 				bool Connect(const char* uri) override;
 				bool Execute(const char* sql) override;
 				void Close() override;
+			private:
+				~mariadb_connector();
 		};
 };
 
