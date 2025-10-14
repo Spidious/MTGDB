@@ -10,7 +10,8 @@ if (CMAKE_VERSION VERSION_GREATER 3.12)
 endif()
 
 # Link SQLite3 
-add_library(sqlite3 "lib/sqlite3.c")
+add_library(sqlite3 lib/sqlite3.c)
+set_target_properties(sqlite3 PROPERTIES LINKER_LANGUAGE C)
 target_include_directories(sqlite3 PUBLIC include)
 #Link DB interface
 add_library(db_interface lib/db_interface.cpp)
@@ -19,7 +20,17 @@ target_include_directories(db_interface PUBLIC include)
 add_library(scryfall_api lib/scryfall_api.cpp)
 target_include_directories(scryfall_api PUBLIC include)
 # Link libraries to executable
-target_link_libraries(mtgdb PRIVATE sqlite3 db_interface scryfall_api)
+target_link_libraries(mtgdb PRIVATE db_interface scryfall_api sqlite3)
+
+# Fetch and include openSSL into the project.
+include(FetchContent)
+FetchContent_Declare(
+        openssl
+        GIT_REPOSITORY https://github.com/openssl/openssl.git
+        GIT_TAG        openssl-3.3.2  # or whatever version you want
+)
+FetchContent_MakeAvailable(openssl)
+target_link_libraries(mtgdb PRIVATE ssl crypto)
 
 # SQL info
 configure_file(resources/schema.sql ${CMAKE_BINARY_DIR}/mtgdb/schema.sql COPYONLY)
