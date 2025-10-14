@@ -1,5 +1,4 @@
 #include "scryfall_api.h"
-
 ScryfallAPI::ScryfallAPI() {
 	// TODO: Remove this
 	call_api("test");
@@ -17,7 +16,7 @@ call_api(const string& query) {
 	api_mutex.lock();
 
 	httplib::Client cli(SCRYFALL_API_ENDPOINT);
-	auto res = cli.Get("cards/random"); // Test implementation
+	auto res = cli.Get("/cards/random"); // Test implementation
 	if (res)
 		std::cout << res->body << std::endl;
 	else

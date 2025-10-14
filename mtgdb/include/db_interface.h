@@ -5,9 +5,11 @@
 #define DB_INTERFACE_H
 #pragma once
 #include <iostream>
-#include <sqlite3.h>
 #include <fstream>
 #include <sstream>
+extern "C" {
+	#include <sqlite3.h>
+}
 
 /// <summary>
 /// Establishes a connection to a database using the specified URI.

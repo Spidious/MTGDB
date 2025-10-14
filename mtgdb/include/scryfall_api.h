@@ -1,6 +1,7 @@
 
 #ifndef SCRYFALL_API_H
 #define SCRYFALL_API_H
+#define CPPHTTPLIB_OPENSSL_SUPPORT
 #pragma once
 
 #include <iostream>
@@ -9,9 +10,8 @@
 #include <thread>
 #include <httplib.h>
 
-#define CPPHTTPLIB_OPENSSL_SUPPORT
 #define SCRYFALL_API_DELAY_MS 75 // Must be 50-100ms between requests
-#define SCRYFALL_API_ENDPOINT "https://api.scryfall.com/"
+#define SCRYFALL_API_ENDPOINT "https://api.scryfall.com"
 #define API_ENDPOINT_SEARCH "cards/search?order=cmc&q="
 #define API_ENDPOINT_ID "cards/"
 
