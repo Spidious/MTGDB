@@ -364,3 +364,4 @@ FodyWeavers.xsd
 
 # clion output
 /cmake-build-debug/
+/.idea/
