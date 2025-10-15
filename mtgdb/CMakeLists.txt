@@ -22,15 +22,11 @@ target_include_directories(scryfall_api PUBLIC include)
 # Link libraries to executable
 target_link_libraries(mtgdb PRIVATE db_interface scryfall_api sqlite3)
 
-# Fetch and include openSSL into the project.
-include(FetchContent)
-FetchContent_Declare(
-        openssl
-        GIT_REPOSITORY https://github.com/openssl/openssl.git
-        GIT_TAG        openssl-3.3.2  # or whatever version you want
-)
-FetchContent_MakeAvailable(openssl)
-target_link_libraries(mtgdb PRIVATE ssl crypto)
+# Get CURL
+set(CURL_INCLUDE_DIR "${CMAKE_SOURCE_DIR}/mtgdb/include/curl")
+set(CURL_LIBRARY "${CMAKE_SOURCE_DIR}/mtgdb/lib/libcurl.a")
+find_package(CURL REQUIRED)
+target_link_libraries(mtgdb PRIVATE CURL::libcurl)
 
 # SQL info
 configure_file(resources/schema.sql ${CMAKE_BINARY_DIR}/mtgdb/schema.sql COPYONLY)

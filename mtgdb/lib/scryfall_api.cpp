@@ -6,7 +6,7 @@ std::mutex ScryfallAPI::api_mutex;
 // ScryfallAPI constructor
 ScryfallAPI::
 ScryfallAPI()
-	: cli(SCRYFALL_API_ENDPOINT)
+	//: cli(SCRYFALL_API_ENDPOINT)
 {
 	// Blank Constructor
 }
@@ -26,7 +26,7 @@ url_encode(const string& str_value)
 		}
 		else
 		{
-			oss << '%' << std::uppercase << std::hex << setw(2) << setfill('0') << static_cast<int>(c);
+			; // oss << '%' << std::uppercase << std::hex << setw(2) << setfill('0') << static_cast<int>(c);
 		}
 	}
 	return oss.str();
@@ -40,20 +40,20 @@ call_api(const string& path)
 	lock_guard<mutex> lock(api_mutex);
 
 	// Make the raw API call
-	auto res = cli.Get(path);
+	//auto res = cli.Get(path);
 
 	// Check output
 	// TODO: Exceptions needed
-	if (res && res->status == 200)
+	/*if (res && res->status == 200)
 		std::cout << res->body << std::endl;
 	else
-		std::cout << "Request failed\n";
+		std::cout << "Request failed\n";*/
 
 	// Enforce Scryfall API rate limit
 	this_thread::sleep_for(chrono::milliseconds(SCRYFALL_API_DELAY_MS));
 
 	// Return the body of the response
-	return res->body;
+	return "res->body";
 }
 
 // Search Scryfall by it's ID

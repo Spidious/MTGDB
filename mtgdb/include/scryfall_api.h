@@ -1,14 +1,14 @@
-
 #ifndef SCRYFALL_API_H
 #define SCRYFALL_API_H
-#define CPPHTTPLIB_OPENSSL_SUPPORT
+//#define CPPHTTPLIB_OPENSSL_SUPPORT
 #pragma once
 
 #include <iostream>
 #include <mutex>
 #include <string>
 #include <thread>
-#include <httplib.h>
+//#include <httplib.h>
+#include <curl/curl.h>
 #include <sstream>
 
 #define SCRYFALL_API_DELAY_MS 75 // Must be 50-100ms between requests
@@ -20,7 +20,7 @@ using namespace std;
 
 class ScryfallAPI {
 	static mutex api_mutex;
-	httplib::Client cli;
+	//httplib::Client cli;
 
 	static string url_encode(const string& str_value);
 	string call_api(const string& path);
