@@ -1,0 +1,54 @@
+Package: vcpkg-cmake
+Version: 2024-04-23
+Architecture: x64-windows
+Multi-Arch: same
+Abi: e08c7f4796c43fe1b69669135963c6bf62d5eb0f2ff5a45f7bf2d4f79f118d8d
+Status: install ok installed
+
+Package: zlib
+Version: 1.3.1
+Depends: vcpkg-cmake
+Architecture: x64-windows
+Multi-Arch: same
+Abi: ba0a256f51ce66359b50911ff1e93274a8be6e6fb0185c6689099ced1ba451c5
+Description: A compression library
+Status: install ok installed
+
+Package: vcpkg-cmake-config
+Version: 2024-05-23
+Architecture: x64-windows
+Multi-Arch: same
+Abi: d2b9dcc72d467f11104f037dcdb1df90d5af8e1cbcb5a348cc7a2291e4d9c0ff
+Status: install ok installed
+
+Package: curl
+Version: 8.16.0
+Depends: vcpkg-cmake, vcpkg-cmake-config, zlib
+Architecture: x64-windows
+Multi-Arch: same
+Abi: 4c359579be0fed56f65d9de6369cc1f6d641ae7b3767b5f931d968548bead084
+Description: A library for transferring data with URLs
+Default-Features: non-http, ssl
+Status: install ok installed
+
+Package: curl
+Feature: non-http
+Architecture: x64-windows
+Multi-Arch: same
+Description: Enables protocols beyond HTTP/HTTPS/HTTP2/HTTP3
+Status: install ok installed
+
+Package: curl
+Feature: ssl
+Architecture: x64-windows
+Multi-Arch: same
+Description: Default SSL / TLS implementation.
+Status: install ok installed
+
+Package: curl
+Feature: sspi
+Architecture: x64-windows
+Multi-Arch: same
+Description: SSPI support
+Status: install ok installed
+
