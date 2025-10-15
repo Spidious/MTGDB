@@ -26,10 +26,17 @@ url_encode(const string& str_value)
 		}
 		else
 		{
-			; // oss << '%' << std::uppercase << std::hex << setw(2) << setfill('0') << static_cast<int>(c);
+			oss << '%' << std::uppercase << std::hex << std::setw(2) << std::setfill('0') << static_cast<int>(c);
 		}
 	}
 	return oss.str();
+}
+
+static size_t WriteCallback(void* contents, size_t size, size_t nmemb, void* userp) {
+	size_t totalSize = size * nmemb;
+	std::string* str = static_cast<std::string*>(userp);
+	str->append(static_cast<char*>(contents), totalSize);
+	return totalSize;
 }
 
 // Format and submit the raw API call, enforcing rate limit.
@@ -39,15 +46,29 @@ call_api(const string& path)
 	// Ensure simultaneous API calls are not being made. 
 	lock_guard<mutex> lock(api_mutex);
 
-	// Make the raw API call
-	//auto res = cli.Get(path);
+	// Construct the full URL
+	std::ostringstream url;
+	url << SCRYFALL_API_ENDPOINT
+		<< path;
 
-	// Check output
-	// TODO: Exceptions needed
-	/*if (res && res->status == 200)
-		std::cout << res->body << std::endl;
-	else
-		std::cout << "Request failed\n";*/
+	CURL* curl = curl_easy_init();
+	std::string response;
+	
+	/*if (curl) {
+		curl_easy_setopt(curl, CURLOPT_URL, url.str().c_str());
+		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
+		curl_easy_setopt(curl, CURLOPT_WRITEDATA, &response);
+
+		CURLcode res = curl_easy_perform(curl);
+		curl_easy_cleanup(curl);
+
+		if (res != CURLE_OK) {
+			return "Request failed";
+		}
+	}
+	else {
+		return "CURL init failed";
+	}*/
 
 	// Enforce Scryfall API rate limit
 	this_thread::sleep_for(chrono::milliseconds(SCRYFALL_API_DELAY_MS));
