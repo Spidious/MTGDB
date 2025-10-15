@@ -9,6 +9,7 @@
 #include <string>
 #include <thread>
 #include <httplib.h>
+#include <sstream>
 
 #define SCRYFALL_API_DELAY_MS 75 // Must be 50-100ms between requests
 #define SCRYFALL_API_ENDPOINT "https://api.scryfall.com"
@@ -17,11 +18,11 @@
 
 using namespace std;
 
-class ScryfallAPI {
-private:
+static class ScryfallAPI {
 	mutex api_mutex;
+	httplib::Client cli;
 
-	string url_encode(const string& value);
+	static string url_encode(const string& str_value);
 	string call_api(const string& query);
 
 public:

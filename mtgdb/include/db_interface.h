@@ -11,6 +11,11 @@ extern "C" {
 	#include <sqlite3.h>
 }
 
+#define DB_SQLITE 1
+#define DB_MYSQL 2
+#define DB_MARIADB 3
+
+
 /// <summary>
 /// Establishes a connection to a database using the specified URI.
 /// </summary>
@@ -33,6 +38,8 @@ class DatabaseConnector {
 		/// Closes the resource or connection associated with the object.
 		/// </summary>
 		virtual void Close() = 0;
+	private:
+		~DatabaseConnector() = default;
 };
 
 /// <summary>
@@ -113,11 +120,6 @@ class DBInterface {
 				~mariadb_connector();
 		};
 };
-
-#define DB_SQLITE 1
-#define DB_MYSQL 2
-#define DB_MARIADB 3
-
 #endif 
 
 
