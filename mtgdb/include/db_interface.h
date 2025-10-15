@@ -38,8 +38,6 @@ class DatabaseConnector {
 		/// Closes the resource or connection associated with the object.
 		/// </summary>
 		virtual void Close() = 0;
-	private:
-		~DatabaseConnector() = default;
 };
 
 /// <summary>
