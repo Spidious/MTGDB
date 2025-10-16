@@ -23,8 +23,10 @@ target_include_directories(scryfall_api PUBLIC include)
 target_link_libraries(mtgdb PRIVATE db_interface scryfall_api sqlite3)
 
 # Get CURL
+if(WINDOWS)
 set(CURL_INCLUDE_DIR "${CMAKE_SOURCE_DIR}/mtgdb/external/curl-8.16.0_6-win64-mingw/include/curl")
 set(CURL_LIBRARY "${CMAKE_SOURCE_DIR}/mtgdb/external/curl-8.16.0_6-win64-mingw/bin/libcurl-x64.dll")
+endif()
 find_package(CURL REQUIRED)
 target_link_libraries(mtgdb PRIVATE CURL::libcurl)
 

@@ -13,7 +13,7 @@ int main()
 	// Create api
 	ScryfallAPI api;
 	std::string result = api.BasicSearch("random"); // or call_api("/cards/random")
-
+	cout << result << endl;
 	//// search for card based on ID
 	//cout << "Random card by ID:" << endl;
 	//api.BasicSearch("5b94f37f-ebdf-4b79-a615-58331d27cf4e");

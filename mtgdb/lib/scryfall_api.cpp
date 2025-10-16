@@ -43,39 +43,40 @@ static size_t WriteCallback(void* contents, size_t size, size_t nmemb, void* use
 string ScryfallAPI::
 call_api(const string& path)
 {
-	// Ensure simultaneous API calls are not being made. 
 	lock_guard<mutex> lock(api_mutex);
 
-	// Construct the full URL
-	std::ostringstream url;
-	url << SCRYFALL_API_ENDPOINT
-		<< path;
+	ostringstream url;
+	url << SCRYFALL_API_ENDPOINT << path;
+
+	cout << "CALLING: " << url.str() << endl;
 
 	CURL* curl = curl_easy_init();
-	std::string response;
-	
-	/*if (curl) {
+	string response;
+
+	if (curl) {
 		curl_easy_setopt(curl, CURLOPT_URL, url.str().c_str());
 		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
 		curl_easy_setopt(curl, CURLOPT_WRITEDATA, &response);
 
+		struct curl_slist* headers = NULL;
+		headers = curl_slist_append(headers, "User-Agent: mtgdb/1.0");
+		headers = curl_slist_append(headers, "Accept: application/json");
+		curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
+
 		CURLcode res = curl_easy_perform(curl);
+
+		curl_slist_free_all(headers);
 		curl_easy_cleanup(curl);
 
-		if (res != CURLE_OK) {
+		if (res != CURLE_OK)
 			return "Request failed";
-		}
-	}
-	else {
+	} else
 		return "CURL init failed";
-	}*/
 
-	// Enforce Scryfall API rate limit
 	this_thread::sleep_for(chrono::milliseconds(SCRYFALL_API_DELAY_MS));
-
-	// Return the body of the response
-	return "res->body";
+	return response;
 }
+
 
 // Search Scryfall by it's ID
 string ScryfallAPI::
