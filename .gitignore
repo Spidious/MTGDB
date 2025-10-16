@@ -365,3 +365,6 @@ FodyWeavers.xsd
 # clion output
 /cmake-build-debug/
 /.idea/
+
+# vcpkg
+/vcpkg_installed/
