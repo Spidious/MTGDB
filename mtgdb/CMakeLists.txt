@@ -22,21 +22,9 @@ target_include_directories(scryfall_api PUBLIC include)
 # Link libraries to executable
 target_link_libraries(mtgdb PRIVATE db_interface scryfall_api sqlite3)
 
-# Get CURL
-#message("BEFORE SET HEADERS")
-## For Windows
-#if(WIN32)
-#message("WINDOWS SET HEADERS REACHED")
-#set(CURL_INCLUDE_DIR "${CMAKE_SOURCE_DIR}/vcpkg_installed/x64-windows/include/curl")
-#set(CURL_LIBRARY "${CMAKE_SOURCE_DIR}/vcpkg_installed/x64-windows/lib/libcurl.lib")
-#include_directories(${CURL_INCLUDE_DIR})
-#target_link_libraries(mtgdb PRIVATE ${CURL_LIBRARY})
-#else()
-# For better operating systems.
-message("AFTER SET HEADERS")
+# Use VCPKG to manage CURL
 find_package(CURL REQUIRED)
 target_link_libraries(mtgdb PRIVATE CURL::libcurl)
-#endif()
 
 # SQL info
 configure_file(resources/schema.sql ${CMAKE_BINARY_DIR}/mtgdb/schema.sql COPYONLY)
