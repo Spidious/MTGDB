@@ -24,6 +24,8 @@ ScryfallAPI()
 	headers = NULL;
 	headers = curl_slist_append(headers, "Accept: application/json");
 	headers = curl_slist_append(headers, "User-Agent: mtgdb");
+	curl_easy_setopt(cli, CURLOPT_HTTPGET, 1L);
+	curl_easy_setopt(cli, CURLOPT_WRITEFUNCTION, write_callback);
 	curl_easy_setopt(cli, CURLOPT_HTTPHEADER, headers);
 }
 
@@ -71,8 +73,6 @@ call_api(const string& path)
 
 	// Call the API
 	curl_easy_setopt(cli, CURLOPT_URL, oss.str().c_str());
-	curl_easy_setopt(cli, CURLOPT_HTTPGET, 1L);
-	curl_easy_setopt(cli, CURLOPT_WRITEFUNCTION, write_callback);
 	curl_easy_setopt(cli, CURLOPT_WRITEDATA, &response);
 	CURLcode res = curl_easy_perform(cli);
 
