@@ -3,6 +3,13 @@
 // Define the mutex
 std::mutex ScryfallAPI::api_mutex;
 
+static size_t write_callback(char* contents, size_t size, size_t nmemb, void* userdata) {
+	size_t totalSize = size * nmemb;
+	std::string* response = static_cast<std::string*>(userdata);
+	response->append(static_cast<char*>(contents), totalSize);
+	return totalSize;
+}
+
 // ScryfallAPI constructor
 ScryfallAPI::
 ScryfallAPI()
@@ -65,7 +72,8 @@ call_api(const string& path)
 	// Call the API
 	curl_easy_setopt(cli, CURLOPT_URL, oss.str().c_str());
 	curl_easy_setopt(cli, CURLOPT_HTTPGET, 1L);
-	//curl_easy_setopt(cli, CURLOPT_WRITEDATA, &response);
+	curl_easy_setopt(cli, CURLOPT_WRITEFUNCTION, write_callback);
+	curl_easy_setopt(cli, CURLOPT_WRITEDATA, &response);
 	CURLcode res = curl_easy_perform(cli);
 
 	// Enforce the rate limit
