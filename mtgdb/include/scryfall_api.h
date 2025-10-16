@@ -20,7 +20,8 @@ using namespace std;
 
 class ScryfallAPI {
 	static mutex api_mutex;
-	//httplib::Client cli;
+	struct curl_slist* headers;
+	CURL* cli;
 
 	static string url_encode(const string& str_value);
 	string call_api(const string& path);
@@ -30,6 +31,7 @@ public:
 	string BasicSearch(const string& id);
 	string BasicSearch(const string& name, const string& type, const string& set = "", const int collect_num = 0);
 	string AdvancedSearch(const string& query);
+	~ScryfallAPI();
 };
 
 

@@ -6,9 +6,25 @@ std::mutex ScryfallAPI::api_mutex;
 // ScryfallAPI constructor
 ScryfallAPI::
 ScryfallAPI()
-	//: cli(SCRYFALL_API_ENDPOINT)
 {
-	// Blank Constructor
+	// Initialize the curl client
+	cli = curl_easy_init();
+	if (!cli) {
+		throw std::runtime_error("Failed to initialize CURL");
+	}
+
+	// Set required headers
+	headers = NULL;
+	headers = curl_slist_append(headers, "Accept: application/json");
+	headers = curl_slist_append(headers, "User-Agent: mtgdb");
+	curl_easy_setopt(cli, CURLOPT_HTTPHEADER, headers);
+}
+
+// ScryfallAPI destructor
+ScryfallAPI::~ScryfallAPI() {
+	// Clean up and free curl resources. 
+	curl_slist_free_all(headers);
+	curl_easy_cleanup(cli);
 }
 
 // Encode the URL such that it follows % encoding
@@ -32,47 +48,27 @@ url_encode(const string& str_value)
 	return oss.str();
 }
 
-static size_t WriteCallback(void* contents, size_t size, size_t nmemb, void* userp) {
-	size_t totalSize = size * nmemb;
-	std::string* str = static_cast<std::string*>(userp);
-	str->append(static_cast<char*>(contents), totalSize);
-	return totalSize;
-}
-
 // Format and submit the raw API call, enforcing rate limit.
 string ScryfallAPI::
 call_api(const string& path)
 {
+	// Lock the mutex to ensure thread safety and rate limiting
 	lock_guard<mutex> lock(api_mutex);
 
-	ostringstream url;
-	url << SCRYFALL_API_ENDPOINT << path;
+	// Construct the full URL
+	std::ostringstream oss;
+	oss << SCRYFALL_API_ENDPOINT << path;
 
-	cout << "CALLING: " << url.str() << endl;
-
-	CURL* curl = curl_easy_init();
+	// Construct the response string
 	string response;
 
-	if (curl) {
-		curl_easy_setopt(curl, CURLOPT_URL, url.str().c_str());
-		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
-		curl_easy_setopt(curl, CURLOPT_WRITEDATA, &response);
+	// Call the API
+	curl_easy_setopt(cli, CURLOPT_URL, oss.str().c_str());
+	curl_easy_setopt(cli, CURLOPT_HTTPGET, 1L);
+	//curl_easy_setopt(cli, CURLOPT_WRITEDATA, &response);
+	CURLcode res = curl_easy_perform(cli);
 
-		struct curl_slist* headers = NULL;
-		headers = curl_slist_append(headers, "User-Agent: mtgdb/1.0");
-		headers = curl_slist_append(headers, "Accept: application/json");
-		curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
-
-		CURLcode res = curl_easy_perform(curl);
-
-		curl_slist_free_all(headers);
-		curl_easy_cleanup(curl);
-
-		if (res != CURLE_OK)
-			return "Request failed";
-	} else
-		return "CURL init failed";
-
+	// Enforce the rate limit
 	this_thread::sleep_for(chrono::milliseconds(SCRYFALL_API_DELAY_MS));
 	return response;
 }
