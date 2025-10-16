@@ -59,7 +59,7 @@ class ScryfallAPI {
 	/// </summary>
 	/// <param name="path">The specific endpoint needing to be called</param>
 	/// <returns>Result of the API call</returns>
-	string call_api(const string& path);
+	CURLcode call_api(const string& path, const string* response);
 
 public:
 	/// <summary>

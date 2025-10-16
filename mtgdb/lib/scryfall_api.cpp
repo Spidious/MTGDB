@@ -58,8 +58,8 @@ url_encode(const string& str_value)
 }
 
 // Format and submit the raw API call, enforcing rate limit.
-string ScryfallAPI::
-call_api(const string& path)
+CURLcode ScryfallAPI::
+call_api(const string& path, const string* response)
 {
 	// Lock the mutex to ensure thread safety and rate limiting
 	lock_guard<mutex> lock(api_mutex);
@@ -68,24 +68,23 @@ call_api(const string& path)
 	std::ostringstream oss;
 	oss << SCRYFALL_API_ENDPOINT << path;
 
-	// Construct the response string
-	string response;
-
 	// Call the API
 	curl_easy_setopt(cli, CURLOPT_URL, oss.str().c_str());
-	curl_easy_setopt(cli, CURLOPT_WRITEDATA, &response);
+	curl_easy_setopt(cli, CURLOPT_WRITEDATA, response);
 	CURLcode res = curl_easy_perform(cli);
 
 	// Enforce the rate limit
 	this_thread::sleep_for(chrono::milliseconds(SCRYFALL_API_DELAY_MS));
-	return response;
+	return res;
 }
 
 
 // Search Scryfall by it's ID
 string ScryfallAPI::
 BasicSearch(const string& id) {
-	return call_api(API_ENDPOINT_ID + id);
+	string res;
+	call_api(API_ENDPOINT_ID + id, &res);
+	return res;
 }
 
 string ScryfallAPI::
@@ -103,7 +102,9 @@ BasicSearch(const string& name, const string& type, const string& set, const int
 		oss << "+number:" << collect_num;
 
 	// Call and return the result of the API call.
-	return call_api(API_ENDPOINT_SEARCH + url_encode(oss.str()));
+	string res;
+	call_api(API_ENDPOINT_SEARCH + url_encode(oss.str()), &res);
+	return res;
 }
 
 string ScryfallAPI::
