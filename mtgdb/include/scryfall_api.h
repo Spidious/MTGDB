@@ -9,6 +9,8 @@
 #include <thread>
 #include <iomanip>
 #include <curl/curl.h>
+#include <nlohmann/json.hpp>
+#include <vector>
 #include <sstream>
 
 #define SCRYFALL_API_DELAY_MS 75 // Must be 50-100ms between requests
@@ -59,7 +61,7 @@ class ScryfallAPI {
 	/// </summary>
 	/// <param name="path">The specific endpoint needing to be called</param>
 	/// <returns>Result of the API call</returns>
-	CURLcode call_api(const string& path, const string* response);
+	CURLcode call_api(const string& path, const void* buffer);
 
 public:
 	/// <summary>
@@ -97,6 +99,26 @@ public:
 	/// </summary>
 	~ScryfallAPI();
 };
+
+/// <summary>
+/// Represents the result of an API call, inheriting from std::string.
+/// Specifically designed to parse and handle Scryfall API responses.
+/// </summary>
+class APIResult{
+private:
+	char* object_type; // "error", "list", "set", "card", "ruling", "card_symbol", "catalog", "bulk_data"
+	nlohmann::json raw_data;
+
+
+public:
+	APIResult();
+	~APIResult();
+};
+
+/********************************************************************************************************
+* Scryfall API Data Structures
+********************************************************************************************************/
+
 
 
 #endif

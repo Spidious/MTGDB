@@ -2,7 +2,8 @@
   "name": "mtgdb",
   "version-string": "0.1.0",
   "dependencies": [
-    "curl"
+    "curl",
+    "nlohmann-json"
   ],
-  "builtin-baseline": "9e4b86d4871c47f125e9f631de07d963fcd38389"
+  "builtin-baseline": "071f676f662b8d36a2f1762c63516e60b99d375b"
 }
