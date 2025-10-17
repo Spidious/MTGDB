@@ -5,5 +5,5 @@
     "curl",
     "nlohmann-json"
   ],
-  "builtin-baseline": "071f676f662b8d36a2f1762c63516e60b99d375b"
+  "builtin-baseline": "4caeed90e6b77b09311ffb5235139fb1526fef38"
 }

@@ -12,4 +12,5 @@ endif()
 project ("mtgdb")
 
 # Include sub-projects.
+#set(CMAKE_TOOLCHAIN_FILE "${CMAKE_CURRENT_SOURCE_DIR}/mtgdb/vcpkg_installed/scripts/buildsystems/vcpkg.cmake" CACHE FILEPATH "VCPKG toolchain" FORCE)
 add_subdirectory ("mtgdb")

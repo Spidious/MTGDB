@@ -23,6 +23,7 @@ target_include_directories(db_interface PUBLIC include)
 #Link Scryfall API Wrapper
 add_library(scryfall_api lib/scryfall_api.cpp lib/api_result.cpp)
 target_include_directories(scryfall_api PUBLIC include)
+target_include_directories(scryfall_api PUBLIC ../vcpkg_installed/x64-linux/include)
 target_link_libraries(scryfall_api PRIVATE nlohmann_json::nlohmann_json CURL::libcurl)
 # Link libraries to executable
 target_link_libraries(mtgdb PRIVATE db_interface scryfall_api sqlite3)
