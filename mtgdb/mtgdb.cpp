@@ -13,14 +13,10 @@ int main()
 	ScryfallAPI api;
 
 	// search for card based on ID
-	cout << "Random card by ID:" << endl
-		<< api.BasicSearch("5b94f37f-ebdf-4b79-a615-58331d27cf4e") 
-		<< endl;
+	APIResult result = api.BasicSearch("5b94f37f-ebdf-4b79-a615-58331d27cf4e");
 
-	// Search for card based on information
-	cout << "Searching random card by name:" << endl
-		<< api.BasicSearch("Mechanical Mobster", "Artifact", "", 168) 
-		<< endl;
+	// Print result
+	cout << result["name"] << endl;
 
 	return 0;
 }

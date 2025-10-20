@@ -80,14 +80,17 @@ call_api(const string& path, const void* buffer)
 
 
 // Search Scryfall by it's ID
-string ScryfallAPI::
+APIResult ScryfallAPI::
 BasicSearch(const string& id) {
 	string res;
 	call_api(API_ENDPOINT_ID + id, &res);
-	return res;
+
+	APIResult api_res(res.c_str());
+
+	return api_res;
 }
 
-string ScryfallAPI::
+APIResult ScryfallAPI::
 BasicSearch(const string& name, const string& type, const string& set, const int collect_num) {
 	// Start search stream
 	std::ostringstream oss;
@@ -104,7 +107,8 @@ BasicSearch(const string& name, const string& type, const string& set, const int
 	// Call and return the result of the API call.
 	string res;
 	call_api(API_ENDPOINT_SEARCH + url_encode(oss.str()), &res);
-	return res;
+	APIResult api_res(res.c_str());
+	return api_res;
 }
 
 string ScryfallAPI::

@@ -19,6 +19,7 @@
 #define API_ENDPOINT_ID "/cards/"
 
 using namespace std;
+using namespace nlohmann;
 
 /// <summary>
 /// Callback function for writing received data, typically used with data transfer libraries such as libcurl.
@@ -75,7 +76,7 @@ public:
 	/// </summary>
 	/// <param name="id">Scryfall ID or Keyword</param>
 	/// <returns>Raw API Result</returns>
-	string BasicSearch(const string& id);
+	APIResult BasicSearch(const string& id);
 
 	/// <summary>
 	/// Performs a basic search using the specified name, type, and optional set and collection number.
@@ -85,7 +86,7 @@ public:
 	/// <param name="set">The set to search within (optional).</param>
 	/// <param name="collect_num">The collection number to search for (optional).</param>
 	/// <returns>Raw API Result</returns>
-	string BasicSearch(const string& name, const string& type, const string& set = "", const int collect_num = 0);
+	APIResult BasicSearch(const string& name, const string& type, const string& set, const int collect_num);
 
 	/// <summary>
 	/// Performs a scryfall search using the advanced query syntax on https://scryfall.com/docs/syntax
@@ -104,15 +105,13 @@ public:
 /// Represents the result of an API call, inheriting from std::string.
 /// Specifically designed to parse and handle Scryfall API responses.
 /// </summary>
-class APIResult{
+class APIResult : public json{
 private:
-	char* object_type; // "error", "list", "set", "card", "ruling", "card_symbol", "catalog", "bulk_data"
-	nlohmann::json raw_data;
-
+	std::string object_type; // "error", "list", "set", "card", "ruling", "card_symbol", "catalog", "bulk_data"
 
 public:
-	APIResult();
-	~APIResult();
+	APIResult(std::string json);
+	//~APIResult();
 };
 
 /********************************************************************************************************
