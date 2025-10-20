@@ -11,6 +11,25 @@ endif()
 
 project ("mtgdb")
 
+#Find vcpkg packages
+find_package(CURL REQUIRED)
+find_package(nlohmann_json CONFIG REQUIRED)
+
+# Link SQLite3
+add_library(sqlite3 lib/sqlite3.c)
+set_target_properties(sqlite3 PROPERTIES LINKER_LANGUAGE C)
+target_include_directories(sqlite3 PUBLIC include)
+
+#Link DB interface
+add_library(db_interface lib/db_interface.cpp)
+target_include_directories(db_interface PUBLIC include)
+
+#Link Scryfall API Wrapper
+add_library(scryfall_api lib/scryfall_api.cpp lib/api_result.cpp)
+target_include_directories(scryfall_api PUBLIC include)
+target_include_directories(scryfall_api PUBLIC vcpkg_installed/x64-linux/include)
+target_link_libraries(scryfall_api PRIVATE nlohmann_json::nlohmann_json CURL::libcurl)
+
 # Include sub-projects.
 #set(CMAKE_TOOLCHAIN_FILE "${CMAKE_CURRENT_SOURCE_DIR}/mtgdb/vcpkg_installed/scripts/buildsystems/vcpkg.cmake" CACHE FILEPATH "VCPKG toolchain" FORCE)
 add_subdirectory ("mtgdb")
