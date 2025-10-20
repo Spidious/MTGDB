@@ -11,6 +11,7 @@ endif()
 
 project ("mtgdb")
 
+
 # Link SQLite3
 add_library(sqlite3 lib/sqlite3.c)
 set_target_properties(sqlite3 PROPERTIES LINKER_LANGUAGE C)
