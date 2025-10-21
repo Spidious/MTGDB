@@ -22,6 +22,22 @@ using namespace std;
 using namespace nlohmann;
 
 /// <summary>
+/// Represents the result of an API call, inheriting from std::string.
+/// Specifically designed to parse and handle Scryfall API responses.
+/// </summary>
+class APIResult : private json{
+private:
+	std::string object_type; // "error", "list", "set", "card", "ruling", "card_symbol", "catalog", "bulk_data"
+
+public:
+	APIResult() = default;
+	explicit APIResult(std::string json);
+	APIResult& operator<<(const string& str);
+	string operator[](const string& str);
+	//~APIResult();
+};
+
+/// <summary>
 /// Callback function for writing received data, typically used with data transfer libraries such as libcurl.
 /// </summary>
 /// <param name="ptr">Pointer to the received data buffer.</param>
@@ -61,8 +77,10 @@ class ScryfallAPI {
 	/// Calls an api endpoint, enforcing rate limit
 	/// </summary>
 	/// <param name="path">The specific endpoint needing to be called</param>
+	/// <param name="buffer">Buffer in which to put the
 	/// <returns>Result of the API call</returns>
-	CURLcode call_api(const string& path, const void* buffer);
+	template <typename T>
+	CURLcode call_api(const string& path, const T* buffer);
 
 public:
 	/// <summary>
@@ -86,7 +104,7 @@ public:
 	/// <param name="set">The set to search within (optional).</param>
 	/// <param name="collect_num">The collection number to search for (optional).</param>
 	/// <returns>Raw API Result</returns>
-	APIResult BasicSearch(const string& name, const string& type, const string& set, const int collect_num);
+	APIResult BasicSearch(const string& name, const string& type, const string& set, int collect_num);
 
 	/// <summary>
 	/// Performs a scryfall search using the advanced query syntax on https://scryfall.com/docs/syntax
@@ -99,19 +117,6 @@ public:
 	/// Destroys the ScryfallAPI object and releases any associated resources.
 	/// </summary>
 	~ScryfallAPI();
-};
-
-/// <summary>
-/// Represents the result of an API call, inheriting from std::string.
-/// Specifically designed to parse and handle Scryfall API responses.
-/// </summary>
-class APIResult : public json{
-private:
-	std::string object_type; // "error", "list", "set", "card", "ruling", "card_symbol", "catalog", "bulk_data"
-
-public:
-	APIResult(std::string json);
-	//~APIResult();
 };
 
 /********************************************************************************************************

@@ -58,8 +58,9 @@ url_encode(const string& str_value)
 }
 
 // Format and submit the raw API call, enforcing rate limit.
+template <typename T>
 CURLcode ScryfallAPI::
-call_api(const string& path, const void* buffer)
+call_api(const string& path, const T* buffer)
 {
 	// Lock the mutex to ensure thread safety and rate limiting
 	lock_guard<mutex> lock(api_mutex);
