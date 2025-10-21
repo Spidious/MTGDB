@@ -1,15 +1,13 @@
 #include "scryfall_api.h"
 
-APIResult::APIResult(std::string json) {
-	this->update(nlohmann::json::parse(json));
+APIResult::APIResult(const string json) {
+	update_parse(json);
 }
 
-APIResult& APIResult::operator<<(const string& str)
-{
-	// Update the contents with a parsed json
-	try
-	{
-		this->update(nlohmann::json::parse(str));
+void APIResult::update_parse(const string str) {
+	try {
+		this->update(this->parse(str));
+		object_type = (*this)["object"];
 	}
 	catch (const nlohmann::json::parse_error e)
 	{
@@ -20,24 +18,11 @@ APIResult& APIResult::operator<<(const string& str)
 	{
 		throw invalid_argument("Unknown error");
 	}
-	return *this;
 }
 
-
-string APIResult::operator[](const string& str)
+APIResult& APIResult::operator<<(const string& str)
 {
-	string o_string;
-	try
-	{
-		o_string = static_cast<nlohmann::json&>(*this)[str].get<string>();
-	}
-	catch (const nlohmann::json::parse_error e)
-	{
-		throw invalid_argument(e.what());
-	}
-	catch (...)
-	{
-		throw invalid_argument("Unknown error");
-	}
-	return o_string;
+	// Update the contents with a parsed json
+	update_parse(str);
+	return *this;
 }

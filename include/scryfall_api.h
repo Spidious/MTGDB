@@ -27,14 +27,48 @@ using namespace nlohmann;
 /// </summary>
 class APIResult : private json{
 private:
-	std::string object_type; // "error", "list", "set", "card", "ruling", "card_symbol", "catalog", "bulk_data"
+
+	/// <summary>
+	/// Holds type of json object 
+	/// Available types: "error", "list", "set", "card", "ruling", "card_symbol", "catalog", "bulk_data"
+	/// </summary>
+	std::string object_type; 
+
+	/// <summary>
+	/// Parse and update a new string 
+	/// Primary point of entry for JSON
+	/// </summary>
+	/// <param name="str">The string JSON input</param>
+	void update_parse(const string str);
 
 public:
+	/// <summary>
+	/// Default constructor
+	/// </summary>
 	APIResult() = default;
+
+	/// <summary>
+	/// JSON string input constructor
+	/// </summary>
+	/// <param name="json">The string JSON input</param>
 	explicit APIResult(std::string json);
+
+	/// <summary>
+	/// << operator override
+	/// </summary>
+	/// <param name="str">The string JSON input</param>
+	/// <returns>Pointer to current APIResult</returns>
 	APIResult& operator<<(const string& str);
-	string operator[](const string& str);
-	//~APIResult();
+
+	/// <summary>
+	/// Use base class operator in public access
+	/// </summary>
+	using json::operator[];
+
+	/// <summary>
+	/// Specifies default destructor
+	/// </summary>
+	~APIResult() = default;
 };
 
 /// <summary>
@@ -51,6 +85,7 @@ static size_t write_callback(char* ptr, size_t size, size_t nmemb, void* userdat
 /// Api interface for api.scryfall.com
 /// </summary>
 class ScryfallAPI {
+
 	/// <summary>
 	/// Mutex to ensure thread safety and rate limiting
 	/// </summary>
@@ -74,13 +109,20 @@ class ScryfallAPI {
 	static string url_encode(const string& str_value);
 
 	/// <summary>
+	/// Validate the search query. 
+	/// Query should be ready for URL (Decoded): c:rg+mana:{G}+t:bird
+	/// </summary>
+	/// <param name="str_value"></param>
+	/// <returns></returns>
+	static bool validate_search(const string& query);
+
+	/// <summary>
 	/// Calls an api endpoint, enforcing rate limit
 	/// </summary>
 	/// <param name="path">The specific endpoint needing to be called</param>
 	/// <param name="buffer">Buffer in which to put the
 	/// <returns>Result of the API call</returns>
-	template <typename T>
-	CURLcode call_api(const string& path, const T* buffer);
+	CURLcode call_api(const string& path, const void* buffer);
 
 public:
 	/// <summary>
@@ -111,7 +153,9 @@ public:
 	/// </summary>
 	/// <param name="query">String search query</param>
 	/// <returns>Raw API Result</returns>
-	string AdvancedSearch(const string& query);
+	//APIResult AdvancedSearch(const string& query);
+
+	
 
 	/// <summary>
 	/// Destroys the ScryfallAPI object and releases any associated resources.
@@ -120,9 +164,42 @@ public:
 };
 
 /********************************************************************************************************
-* Scryfall API Data Structures
+* Scryfall API Exceptions
 ********************************************************************************************************/
 
+/// <summary>
+/// General base exception 
+/// </summary>
+class Scryfall_Exception : public exception {
+private:
+	string message;
+public:
+	Scryfall_Exception(const string& msg = "Unknown Exception") : message(msg) {}
+
+	/// <summary>
+	/// Returns a char* string representing the error being thrown.
+	/// </summary>
+	/// <returns>char array</returns>
+	const char* what() const noexcept override {
+		return message.c_str();
+	}
+};
+
+/// <summary>
+/// Thrown when search query is incorrect or invalid
+/// </summary>
+class Invalid_Search_Query : public Scryfall_Exception {
+public:
+	Invalid_Search_Query(const string msg) : Scryfall_Exception("Exception - Invalid Search Query : " + msg) {}
+};
+
+/// <summary>
+/// Thrown when API returns invalid response
+/// </summary>
+class Invalid_Response : public Scryfall_Exception {
+public:
+	Invalid_Response(const string msg) : Scryfall_Exception("Exception - Invalid API Response : " + msg) {}
+};
 
 
 #endif

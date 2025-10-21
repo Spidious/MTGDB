@@ -57,10 +57,18 @@ url_encode(const string& str_value)
 	return oss.str();
 }
 
+// Validate the scryfall search url query
+bool ScryfallAPI::
+validate_search(const string& query) 
+{
+	// Break apart query at the + markers
+	// 
+	return true;
+}
+
 // Format and submit the raw API call, enforcing rate limit.
-template <typename T>
 CURLcode ScryfallAPI::
-call_api(const string& path, const T* buffer)
+call_api(const string& path, const void* buffer)
 {
 	// Lock the mutex to ensure thread safety and rate limiting
 	lock_guard<mutex> lock(api_mutex);
@@ -72,12 +80,15 @@ call_api(const string& path, const T* buffer)
 	// Call the API
 	curl_easy_setopt(cli, CURLOPT_URL, oss.str().c_str());
 	curl_easy_setopt(cli, CURLOPT_WRITEDATA, buffer);
+	cout << "DEBUG: " << oss.str() << endl;
 	CURLcode res = curl_easy_perform(cli);
 
 	// Enforce the rate limit
 	this_thread::sleep_for(chrono::milliseconds(SCRYFALL_API_DELAY_MS));
 	return res;
 }
+
+
 
 
 // Search Scryfall by it's ID
@@ -92,7 +103,7 @@ BasicSearch(const string& id) {
 }
 
 APIResult ScryfallAPI::
-BasicSearch(const string& name, const string& type, const string& set, const int collect_num) {
+BasicSearch(const string& name, const string& type, const string& set = "", const int collect_num = 0) {
 	// Start search stream
 	std::ostringstream oss;
 	// Add name and type searches
@@ -107,12 +118,28 @@ BasicSearch(const string& name, const string& type, const string& set, const int
 
 	// Call and return the result of the API call.
 	string res;
-	call_api(API_ENDPOINT_SEARCH + url_encode(oss.str()), &res);
-	APIResult api_res(res.c_str());
+	if (!call_api(API_ENDPOINT_SEARCH + url_encode(oss.str()), &res)) {
+		//throw Scryfall_Exception("Failed to execute API Call");
+	}
+
+	APIResult api_res;
+	try {
+		// Parse the API Result
+		api_res << res;
+		cout << api_res["object"] << " ||||| " << api_res["details"] << endl;
+	}
+	catch (invalid_argument e) {
+		throw Invalid_Response(e.what());
+	}
+	catch (...) {
+		throw Scryfall_Exception("Failed to parse response: Unknown Error");
+	}
+
 	return api_res;
 }
 
-string ScryfallAPI::
-AdvancedSearch(const string& query) {
-	return ""; // Placeholder Implementation
-}
+//APIResult ScryfallAPI::
+//AdvancedSearch(const string& query) {
+//	APIResult api_res();
+//	return api_res(); // Placeholder Implementation
+//}
