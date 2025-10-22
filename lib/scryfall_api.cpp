@@ -36,6 +36,18 @@ ScryfallAPI::~ScryfallAPI() {
 	curl_easy_cleanup(cli);
 }
 
+// Parse scryfall excpetions into API result
+APIResult ScryfallAPI::res_return(const exception* e) {
+	APIResult res;
+	return res;
+}
+
+APIResult ScryfallAPI::res_return(const string& json) {
+	APIResult res;
+	return res;
+}
+
+
 // Encode the URL such that it follows % encoding
 // https://en.wikipedia.org/wiki/Percent-encoding
 string ScryfallAPI::

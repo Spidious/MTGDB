@@ -32,7 +32,17 @@ private:
 	/// Holds type of json object 
 	/// Available types: "error", "list", "set", "card", "ruling", "card_symbol", "catalog", "bulk_data"
 	/// </summary>
-	std::string object_type; 
+	string object_type; 
+
+	/// <summary>
+	/// Holds status codes. <0 = exceptions && >0 = http status
+	/// </summary>
+	int status;
+
+	/// <summary>
+	/// Hold a pointer to an exception (when status <0)
+	/// </summary>
+	exception* e_ptr;
 
 	/// <summary>
 	/// Parse and update a new string 
@@ -42,16 +52,12 @@ private:
 	void update_parse(const string str);
 
 public:
-	/// <summary>
-	/// Default constructor
-	/// </summary>
-	APIResult() = default;
 
 	/// <summary>
 	/// JSON string input constructor
 	/// </summary>
 	/// <param name="json">The string JSON input</param>
-	explicit APIResult(std::string json);
+	APIResult(std::string json = "{}");
 
 	/// <summary>
 	/// << operator override
@@ -124,6 +130,21 @@ class ScryfallAPI {
 	/// <returns>Result of the API call</returns>
 	CURLcode call_api(const string& path, const void* buffer);
 
+	/// <summary>
+	/// Return a APIResult representing a failed request/result
+	/// </summary>
+	/// <param name="e">Pointer to the exception</param>
+	/// <returns>APIResult object with status set to fail code</returns>
+	APIResult res_return(const exception* e);
+
+	/// <summary>
+	/// Return an APIResult parsed with JSON
+	/// Creates necessary objects for returned data
+	/// </summary>
+	/// <param name="json">string to raw JSON</param>
+	/// <returns></returns>
+	APIResult res_return(const string& json);
+
 public:
 	/// <summary>
 	/// An API constructor that initializes the curl client and sets required headers
@@ -173,6 +194,7 @@ public:
 class Scryfall_Exception : public exception {
 private:
 	string message;
+	
 public:
 	Scryfall_Exception(const string& msg = "Unknown Exception") : message(msg) {}
 

@@ -1,6 +1,11 @@
 #include "scryfall_api.h"
 
-APIResult::APIResult(const string json) {
+APIResult::APIResult(const string json) :
+	json(), 
+	object_type(""), 
+	status(0), 
+	e_ptr(nullptr) 
+{
 	update_parse(json);
 }
 
@@ -12,7 +17,8 @@ void APIResult::update_parse(const string str) {
 	catch (const nlohmann::json::parse_error e)
 	{
 		// TODO: make this explain what happened
-		throw invalid_argument(e.what());
+		string r = e.what();
+		throw invalid_argument("Unable to parse JSON: " + r);
 	}
 	catch (...)
 	{
