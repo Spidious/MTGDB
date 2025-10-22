@@ -80,7 +80,7 @@ call_api(const string& path, const void* buffer)
 	// Call the API
 	curl_easy_setopt(cli, CURLOPT_URL, oss.str().c_str());
 	curl_easy_setopt(cli, CURLOPT_WRITEDATA, buffer);
-	cout << "DEBUG: " << oss.str() << endl;
+	cout << "[DEBUG] API Call: " << oss.str() << endl;
 	CURLcode res = curl_easy_perform(cli);
 
 	// Enforce the rate limit
@@ -103,7 +103,7 @@ BasicSearch(const string& id) {
 }
 
 APIResult ScryfallAPI::
-BasicSearch(const string& name, const string& type, const string& set = "", const int collect_num = 0) {
+BasicSearch(const string& name, const string& type, const string& set , const int collect_num) {
 	// Start search stream
 	std::ostringstream oss;
 	// Add name and type searches
@@ -126,7 +126,6 @@ BasicSearch(const string& name, const string& type, const string& set = "", cons
 	try {
 		// Parse the API Result
 		api_res << res;
-		cout << api_res["object"] << " ||||| " << api_res["details"] << endl;
 	}
 	catch (invalid_argument e) {
 		throw Invalid_Response(e.what());

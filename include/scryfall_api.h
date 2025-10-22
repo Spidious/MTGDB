@@ -146,7 +146,7 @@ public:
 	/// <param name="set">The set to search within (optional).</param>
 	/// <param name="collect_num">The collection number to search for (optional).</param>
 	/// <returns>Raw API Result</returns>
-	APIResult BasicSearch(const string& name, const string& type, const string& set, int collect_num);
+	APIResult BasicSearch(const string& name, const string& type, const string& set = "", int collect_num = 0);
 
 	/// <summary>
 	/// Performs a scryfall search using the advanced query syntax on https://scryfall.com/docs/syntax
