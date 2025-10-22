@@ -12,20 +12,22 @@ int main()
 	// Create api
 	ScryfallAPI api;
 
-	APIResult result1;
-	cout << "Reached" << endl;
-	try {
-		 result1 = api.BasicSearch("test", "test", "test", 5);
-	}
-	catch (Invalid_Response e) {
-		cout << "Error1: " << e.what() << endl;
-	}
-	catch (Scryfall_Exception e) {
-		cout << "Error2: " << e.what() << endl;
-	}
+	//// search for card based on ID
+	//auto result1 = api.BasicSearch("5b94f37f-ebdf-4b79-a615-58331d27cf4e");
+	//auto result2 = api.BasicSearch("random");
+	APIResult result;
 
-	// Print result
-	cout << result1["name"] << endl;
+	result = api.BasicSearch("Spider", "Legendary Creature");
+
+	cout << "NAME: ";
+	if (result["total_cards"] != 0)
+	{
+		for (int i = 0; i < result["total_cards"]; i++)
+		{
+			cout << result["data"][i]["name"] << ((i+1 != result["total_cards"]) ? " ||  " : "");
+		}
+		cout << ((result["next_page"] == NULL) ? "" : " || ...") << endl;
+	}
 
 
 	return 0;
