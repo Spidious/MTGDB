@@ -49,7 +49,7 @@ private:
 	/// Primary point of entry for JSON
 	/// </summary>
 	/// <param name="str">The string JSON input</param>
-	void update_parse(const string str);
+	void update_parse(const string& str);
 
 public:
 
@@ -57,7 +57,7 @@ public:
 	/// JSON string input constructor
 	/// </summary>
 	/// <param name="json">The string JSON input</param>
-	APIResult(std::string json = "{}");
+	APIResult(const string& json = "{}");
 
 	/// <summary>
 	/// << operator override

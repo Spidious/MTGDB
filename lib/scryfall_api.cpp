@@ -36,7 +36,7 @@ ScryfallAPI::~ScryfallAPI() {
 	curl_easy_cleanup(cli);
 }
 
-// Parse scryfall excpetions into API result
+// Parse scryfall exceptions into API result
 APIResult ScryfallAPI::res_return(const exception* e) {
 	APIResult res;
 	return res;
