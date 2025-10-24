@@ -9,9 +9,7 @@ APIResult::APIResult(const string& json) :
 }
 
 void APIResult::update_parse(const string& str) {
-	string reject = "{}";
-
-	if (str.empty() || str.compare(reject)) {
+	if (str.empty() || !str.compare("{}")) {
 		// TODO: build a log to handle this
 		cerr << "Cannot parse string: " << str << endl;
 		return; 
@@ -19,8 +17,8 @@ void APIResult::update_parse(const string& str) {
 
 	try {
 		this->update(this->parse(str));
-		//auto obj = (*this)["object"];
-		//object_type = (obj == NULL) ? "" : obj;
+		auto obj = (*this)["object"];
+		object_type = (obj == NULL) ? "" : obj;
 	}
 	catch (const nlohmann::json::parse_error e)
 	{
@@ -31,7 +29,6 @@ void APIResult::update_parse(const string& str) {
 	catch (const std::exception& e)
 	{
 		cerr << e.what() << endl;
-		cerr << str.compare(reject) << endl;
 	}
 	catch (...)
 	{
