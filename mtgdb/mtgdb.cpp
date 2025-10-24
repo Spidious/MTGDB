@@ -15,6 +15,7 @@ int main()
 	//// search for card based on ID
 	//auto result1 = api.BasicSearch("5b94f37f-ebdf-4b79-a615-58331d27cf4e");
 	//auto result2 = api.BasicSearch("random");
+	
 	APIResult result;
 
 	result = api.BasicSearch("Spider", "Legendary Creature");
