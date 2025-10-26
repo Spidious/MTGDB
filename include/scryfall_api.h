@@ -108,6 +108,11 @@ class ScryfallAPI {
 	CURL* cli;
 
 	/// <summary>
+	/// Store the result of the API call
+	/// </summary>
+	APIResult res;
+
+	/// <summary>
 	/// Static function to encode strings with % encoding for URLs
 	/// </summary>
 	/// <param name="str_value">String value to be encoded</param>
@@ -134,8 +139,9 @@ class ScryfallAPI {
 	/// Return a APIResult representing a failed request/result
 	/// </summary>
 	/// <param name="e">Pointer to the exception</param>
+	/// <param name="code">custom error code (default -1)</param>
 	/// <returns>APIResult object with status set to fail code</returns>
-	APIResult res_return(const exception* e);
+	void res_update(const exception* e, const int code = -1);
 
 	/// <summary>
 	/// Return an APIResult parsed with JSON
@@ -143,7 +149,8 @@ class ScryfallAPI {
 	/// </summary>
 	/// <param name="json">string to raw JSON</param>
 	/// <returns></returns>
-	APIResult res_return(const string& json);
+	void res_update(const string& json);
+
 
 public:
 	/// <summary>
@@ -157,7 +164,7 @@ public:
 	/// </summary>
 	/// <param name="id">Scryfall ID or Keyword</param>
 	/// <returns>Raw API Result</returns>
-	APIResult BasicSearch(const string& id);
+	void BasicSearch(const string& id);
 
 	/// <summary>
 	/// Performs a basic search using the specified name, type, and optional set and collection number.
@@ -167,7 +174,7 @@ public:
 	/// <param name="set">The set to search within (optional).</param>
 	/// <param name="collect_num">The collection number to search for (optional).</param>
 	/// <returns>Raw API Result</returns>
-	APIResult BasicSearch(const string& name, const string& type, const string& set = "", int collect_num = 0);
+	void BasicSearch(const string& name, const string& type, const string& set = "", int collect_num = 0);
 
 	/// <summary>
 	/// Performs a scryfall search using the advanced query syntax on https://scryfall.com/docs/syntax
@@ -175,6 +182,8 @@ public:
 	/// <param name="query">String search query</param>
 	/// <returns>Raw API Result</returns>
 	//APIResult AdvancedSearch(const string& query);
+
+	const APIResult& GetResult() const;
 
 	
 

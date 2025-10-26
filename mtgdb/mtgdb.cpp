@@ -15,19 +15,34 @@ int main()
 	//// search for card based on ID
 	//auto result1 = api.BasicSearch("5b94f37f-ebdf-4b79-a615-58331d27cf4e");
 	//auto result2 = api.BasicSearch("random");
-	
-	APIResult result;
 
-	result = api.BasicSearch("Spider", "Legendary Creature");
 
-	cout << "NAME: ";
-	if (result["total_cards"] != 0)
+	api.BasicSearch("Spider", "Creature");
+
+	const APIResult& result = api.GetResult();
+
+	if (result["object"] != "error")
 	{
-		for (int i = 0; i < result["total_cards"]; i++)
+		cout << "NAME: ";
+		if (result["total_cards"] != 0)
 		{
-			cout << result["data"][i]["name"] << ((i+1 != result["total_cards"]) ? " ||  " : "");
+			for (int i = 0; i < result["total_cards"]; i++)
+			{
+				cout << result["data"][i]["name"] << ((i+1 != result["total_cards"]) ? " ||  " : "");
+			}
+			cout << ((result["next_page"] == NULL) ? "" : " || ...") << endl;
 		}
-		cout << ((result["next_page"] == NULL) ? "" : " || ...") << endl;
+	}
+	else
+	{
+		cerr << "API Call failed with: "
+			<< endl
+			<< ">> Code "
+			<< result["code"]
+			<< endl
+			<< ">> Description: "
+			<< result["details"]
+			<< endl;
 	}
 
 

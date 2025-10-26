@@ -36,15 +36,35 @@ ScryfallAPI::~ScryfallAPI() {
 	curl_easy_cleanup(cli);
 }
 
-// Parse scryfall exceptions into API result
-APIResult ScryfallAPI::res_return(const exception* e) {
-	APIResult res;
-	return res;
+// Parse exceptions into API result
+void ScryfallAPI::res_update(const exception* e, const int code)
+{
+	cout << "[ DEBUG ] Hit" << endl;
+	ostringstream buffer;
+	buffer << "{\"object\":\"error\", \"code\":\""
+		   << code
+		   << "\", \"status\":404, \"details\":\"Runtime Exception: "
+		   << e->what() << "\"}";
+
+	res << buffer.str();
 }
 
-APIResult ScryfallAPI::res_return(const string& json) {
-	APIResult res;
-	return res;
+void ScryfallAPI::res_update(const string& json) {
+
+	try
+	{
+		res << json;
+	}
+	catch (invalid_argument e)
+	{
+		cerr << "Invalid json argument: " << e.what() << endl << json << endl;
+		res_update(&e);
+	}
+	catch (...)
+	{
+		cerr << "Unable to update result" << endl;
+		res_update(new exception());
+	}
 }
 
 
@@ -104,17 +124,16 @@ call_api(const string& path, const void* buffer)
 
 
 // Search Scryfall by it's ID
-APIResult ScryfallAPI::
+void ScryfallAPI::
 BasicSearch(const string& id) {
-	string res;
-	call_api(API_ENDPOINT_ID + id, &res);
+	string api_res;
+	call_api(API_ENDPOINT_ID + id, &api_res);
 
-	APIResult api_res(res.c_str());
-
-	return api_res;
+	// Store the API result
+	res_update(api_res);
 }
 
-APIResult ScryfallAPI::
+void ScryfallAPI::
 BasicSearch(const string& name, const string& type, const string& set , const int collect_num) {
 	// Start search stream
 	std::ostringstream oss;
@@ -129,24 +148,17 @@ BasicSearch(const string& name, const string& type, const string& set , const in
 		oss << "+number:" << collect_num;
 
 	// Call and return the result of the API call.
-	string res;
-	if (!call_api(API_ENDPOINT_SEARCH + url_encode(oss.str()), &res)) {
-		//throw Scryfall_Exception("Failed to execute API Call");
-	}
+	string api_res;
+	call_api(API_ENDPOINT_SEARCH + url_encode(oss.str()), &api_res); // Error checking moved (May need to put this back in an if statement)
 
-	APIResult api_res;
-	try {
-		// Parse the API Result
-		api_res << res;
-	}
-	catch (invalid_argument e) {
-		throw Invalid_Response(e.what());
-	}
-	catch (...) {
-		throw Scryfall_Exception("Failed to parse response: Unknown Error");
-	}
+	// Store the API result
+	res_update(api_res);
+}
 
-	return api_res;
+const APIResult& ScryfallAPI::
+GetResult() const
+{
+	return this->res;
 }
 
 //APIResult ScryfallAPI::

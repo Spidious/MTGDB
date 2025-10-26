@@ -9,15 +9,16 @@ APIResult::APIResult(const string& json) :
 }
 
 void APIResult::update_parse(const string& str) {
-	if (str.empty() || !str.compare("{}")) {
+	if (str.empty() || str == "{}") {
 		// TODO: build a log to handle this
+		// Do not crash the code.
 		cerr << "Cannot parse string: " << str << endl;
 		return; 
 	}
 
 	try {
-		this->update(this->parse(str));
-		auto obj = (*this)["object"];
+		this->update(APIResult::parse(str));
+		const auto obj = (*this)["object"];
 		object_type = (obj == NULL) ? "" : obj;
 	}
 	catch (const nlohmann::json::parse_error e)
@@ -28,6 +29,7 @@ void APIResult::update_parse(const string& str) {
 	}
 	catch (const std::exception& e)
 	{
+		// TODO: Build a log to handle this
 		cerr << e.what() << endl;
 	}
 	catch (...)
