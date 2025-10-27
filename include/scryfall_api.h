@@ -21,6 +21,37 @@
 using namespace std;
 using namespace nlohmann;
 
+const vector<string> SearchFields {
+	"c", "color",
+	"id", "identity",
+	"t", "type",
+	"has", "is", "include", "in",
+	"o", "oracle", "fo", "fulloracle",
+	"kw", "keyword",
+	"m", "mana", "manavalue", "devotion", "produces",
+	"pow", "power", "tou", "toughness", "loy", "loyalty",
+	"r", "rarity",
+	"s", "set", "e", "edition", "cn", "number", "b", "block",
+	"cheapest", "tix", "usd", "eur",
+	"a", "artist", "artists",
+	"ft", "flavor", "wm", "watermark", "illustrations",
+	"border", "frame", "stamp",
+	"year", "date",
+	"art", "arttag", "atag", "function", "otag", "oracletag",
+	"lang", "language",
+	"new", 
+};
+
+const vector<string> SearchOps{
+	":", ">", "<", ">=", "<=", "!=", "-"
+};
+
+struct SearchItem {
+	string field;
+	string op;
+	string value;
+} typedef searchitem;
+
 /// <summary>
 /// Represents the result of an API call, inheriting from std::string.
 /// Specifically designed to parse and handle Scryfall API responses.
@@ -152,7 +183,12 @@ class ScryfallAPI {
 	void res_update(const string& json);
 
 
+
+
+
+
 public:
+	string parse_query(vector<searchitem> queries);
 	/// <summary>
 	/// An API constructor that initializes the curl client and sets required headers
 	/// </summary>
@@ -181,7 +217,7 @@ public:
 	/// </summary>
 	/// <param name="query">String search query</param>
 	/// <returns>Raw API Result</returns>
-	//APIResult AdvancedSearch(const string& query);
+
 
 	const APIResult& GetResult() const;
 

@@ -21,6 +21,7 @@ int main()
 
 	const APIResult& result = api.GetResult();
 
+
 	if (result["object"] != "error")
 	{
 		cout << "NAME: ";

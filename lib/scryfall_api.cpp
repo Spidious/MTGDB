@@ -161,8 +161,13 @@ GetResult() const
 	return this->res;
 }
 
-//APIResult ScryfallAPI::
-//AdvancedSearch(const string& query) {
-//	APIResult api_res();
-//	return api_res(); // Placeholder Implementation
-//}
+
+string ScryfallAPI::parse_query(vector<searchitem> queries) {
+	if (queries.size() <= 0) return "";
+
+	// Grab the back of the queries.
+	searchitem q = queries.back();
+	queries.pop_back();
+
+	return q.field + q.op + q.value + parse_query(queries) + ((queries.size() == 0) ? "+" : "");
+}
