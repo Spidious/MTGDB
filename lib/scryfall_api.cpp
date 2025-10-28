@@ -163,11 +163,41 @@ GetResult() const
 
 
 string ScryfallAPI::parse_query(vector<searchitem> queries) {
-	if (queries.size() <= 0) return "";
+	// Base case (Check that queries is empty)
+	if (!queries.size()) return "";
 
-	// Grab the back of the queries.
-	searchitem q = queries.back();
+	// Grab back of the queries
+	auto [field, op, value] = queries.back();
 	queries.pop_back();
 
-	return q.field + q.op + q.value + parse_query(queries) + ((queries.size() == 0) ? "+" : "");
+	// Validate Field and op (Both must exist
+	if (!SearchFields.contains(field) || !SearchOps.contains(op))
+	{
+		// TODO: Actual error handling, not drop.
+		return parse_query(queries); // Temporarily ignore invalid fields
+	}
+
+	// Create parsed query for output
+	ostringstream parsed_query;
+
+	// Append the field, op, and value to the query, deliminated by spaces in value
+	char* token_value = strtok(value.data(), " ");
+	while (token_value)
+	{
+		// Grab the next token
+		char* next_token = strtok(nullptr, " ");
+
+		// Append to query
+		parsed_query << field << op << token_value;
+
+		// Append a + if there exists a next token
+		if (next_token)
+			parsed_query << "+";
+
+		// iterate current token to next
+		token_value = next_token;
+	}
+
+	// Return the parsed query and recursively call this function
+	return parse_query(queries) + ((queries.size()) ? "+" : "") + parsed_query.str();
 }

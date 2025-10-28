@@ -21,20 +21,7 @@ int main()
 
 	const APIResult& result = api.GetResult();
 
-
-	if (result["object"] != "error")
-	{
-		cout << "NAME: ";
-		if (result["total_cards"] != 0)
-		{
-			for (int i = 0; i < result["total_cards"]; i++)
-			{
-				cout << result["data"][i]["name"] << ((i+1 != result["total_cards"]) ? " ||  " : "");
-			}
-			cout << ((result["next_page"] == NULL) ? "" : " || ...") << endl;
-		}
-	}
-	else
+	if (result["object"] == "error")
 	{
 		cerr << "API Call failed with: "
 			<< endl
@@ -45,7 +32,6 @@ int main()
 			<< result["details"]
 			<< endl;
 	}
-
 
 	return 0;
 }

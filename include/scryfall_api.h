@@ -7,11 +7,12 @@
 #include <mutex>
 #include <string>
 #include <thread>
-#include <iomanip>
+// #include <iomanip>
 #include <curl/curl.h>
 #include <nlohmann/json.hpp>
 #include <vector>
-#include <sstream>
+#include <unordered_set>
+// #include <sstream>
 
 #define SCRYFALL_API_DELAY_MS 75 // Must be 50-100ms between requests
 #define SCRYFALL_API_ENDPOINT "https://api.scryfall.com"
@@ -21,7 +22,8 @@
 using namespace std;
 using namespace nlohmann;
 
-const vector<string> SearchFields {
+const unordered_set<string> SearchFields = {
+	"n", "name",
 	"c", "color",
 	"id", "identity",
 	"t", "type",
@@ -42,7 +44,7 @@ const vector<string> SearchFields {
 	"new", 
 };
 
-const vector<string> SearchOps{
+const unordered_set<string> SearchOps = {
 	":", ">", "<", ">=", "<=", "!=", "-"
 };
 
@@ -182,13 +184,16 @@ class ScryfallAPI {
 	/// <returns></returns>
 	void res_update(const string& json);
 
-
-
+	/// <summary>
+	/// recursive parse a scryfall API query into base format (Non-encoded)
+	/// </summary>
+	/// <param name="queries">list of {field, operator, value} ex. => {{"name", ":", "fish"}, {"mana", ">=", "ug"}}</param>
+	/// <returns>fully parsed array of search queries. ex. => name:fish+man>=ug</returns>
+	static string parse_query(vector<searchitem> queries);
 
 
 
 public:
-	string parse_query(vector<searchitem> queries);
 	/// <summary>
 	/// An API constructor that initializes the curl client and sets required headers
 	/// </summary>
