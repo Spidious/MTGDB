@@ -16,10 +16,22 @@ int main()
 	//auto result1 = api.BasicSearch("5b94f37f-ebdf-4b79-a615-58331d27cf4e");
 	//auto result2 = api.BasicSearch("random");
 
+	string search_prompt = api.parse_query
+		({
+			{
+				"name", ":",
+				"spider"
+			},
+			{
+				"type", ":",
+				"Legendary Creature"
+			}
+		});
 
-	api.BasicSearch("Spider", "Creature");
+	api.AdvancedSearch(search_prompt);
 
 	const APIResult& result = api.GetResult();
+	;
 
 	if (result["object"] == "error")
 	{

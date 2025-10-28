@@ -184,6 +184,8 @@ class ScryfallAPI {
 	/// <returns></returns>
 	void res_update(const string& json);
 
+public:
+
 	/// <summary>
 	/// recursive parse a scryfall API query into base format (Non-encoded)
 	/// </summary>
@@ -191,9 +193,6 @@ class ScryfallAPI {
 	/// <returns>fully parsed array of search queries. ex. => name:fish+man>=ug</returns>
 	static string parse_query(vector<searchitem> queries);
 
-
-
-public:
 	/// <summary>
 	/// An API constructor that initializes the curl client and sets required headers
 	/// </summary>
@@ -222,7 +221,7 @@ public:
 	/// </summary>
 	/// <param name="query">String search query</param>
 	/// <returns>Raw API Result</returns>
-
+	void AdvancedSearch(const string query);
 
 	const APIResult& GetResult() const;
 

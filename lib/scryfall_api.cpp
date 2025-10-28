@@ -201,3 +201,9 @@ string ScryfallAPI::parse_query(vector<searchitem> queries) {
 	// Return the parsed query and recursively call this function
 	return parse_query(queries) + ((queries.size()) ? "+" : "") + parsed_query.str();
 }
+
+void ScryfallAPI::AdvancedSearch(const string query) {
+	string api_res;
+	call_api(API_ENDPOINT_SEARCH + url_encode(query), &api_res);
+	this->res << api_res;
+}
