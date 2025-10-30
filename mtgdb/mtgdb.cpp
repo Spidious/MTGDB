@@ -28,10 +28,13 @@ int main()
 			}
 		});
 
+	cout << "SCRYFALL SEARCH: " << search_prompt << endl;
+
 	api.AdvancedSearch(search_prompt);
 
+
 	const APIResult& result = api.GetResult();
-	;
+
 
 	if (result["object"] == "error")
 	{
@@ -43,6 +46,15 @@ int main()
 			<< ">> Description: "
 			<< result["details"]
 			<< endl;
+	}
+
+	if (result["object"] == "list")
+	{
+		cout << "Total Results: " << result["total_cards"] << endl;
+		for (int i = 0; i < result["total_cards"]; i++)
+		{
+			cout << "[" << i+1 << "] " << result["data"][i]["name"] << endl;
+		}
 	}
 
 	return 0;

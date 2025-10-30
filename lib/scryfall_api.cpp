@@ -39,7 +39,6 @@ ScryfallAPI::~ScryfallAPI() {
 // Parse exceptions into API result
 void ScryfallAPI::res_update(const exception* e, const int code)
 {
-	cout << "[ DEBUG ] Hit" << endl;
 	ostringstream buffer;
 	buffer << "{\"object\":\"error\", \"code\":\""
 		   << code
@@ -112,7 +111,6 @@ call_api(const string& path, const void* buffer)
 	// Call the API
 	curl_easy_setopt(cli, CURLOPT_URL, oss.str().c_str());
 	curl_easy_setopt(cli, CURLOPT_WRITEDATA, buffer);
-	cout << "[DEBUG] API Call: " << oss.str() << endl;
 	CURLcode res = curl_easy_perform(cli);
 
 	// Enforce the rate limit
