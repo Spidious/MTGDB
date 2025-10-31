@@ -19,12 +19,16 @@ int main()
 	string search_prompt = api.parse_query
 		({
 			{
-				"name", ":",
-				"spider"
+				"set", ":",
+				"tle"
 			},
 			{
-				"type", ":",
-				"Legendary Creature"
+				"is", ":",
+				"commander"
+			},
+			{
+				"color", "<=",
+				"uw"
 			}
 		});
 

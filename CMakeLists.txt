@@ -13,6 +13,7 @@ if (POLICY CMP0141)
 endif()
 
 project ("mtgdb")
+enable_testing()
 
 
 # Link SQLite3
@@ -39,3 +40,4 @@ target_link_libraries(scryfall_api PRIVATE CURL::libcurl nlohmann_json::nlohmann
 
 # Include sub-projects.
 add_subdirectory ("mtgdb")
+add_subdirectory("test")

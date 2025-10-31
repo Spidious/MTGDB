@@ -3,7 +3,8 @@
   "version-string": "0.1.0",
   "dependencies": [
     "curl",
-    "nlohmann-json"
+    "nlohmann-json",
+    "gtest"
   ],
   "builtin-baseline": "4caeed90e6b77b09311ffb5235139fb1526fef38"
 }
