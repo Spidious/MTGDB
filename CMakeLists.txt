@@ -13,7 +13,6 @@ if (POLICY CMP0141)
 endif()
 
 project ("mtgdb")
-enable_testing()
 
 
 # Link SQLite3
@@ -39,5 +38,11 @@ target_include_directories(scryfall_api PUBLIC vcpkg_installed/${VCPKG_TARGET_TR
 target_link_libraries(scryfall_api PRIVATE CURL::libcurl nlohmann_json::nlohmann_json)
 
 # Include sub-projects.
+add_subdirectory("lib")
 add_subdirectory ("mtgdb")
-add_subdirectory("test")
+
+option(ENABLE_TESTS "Build tests" OFF)
+if(ENABLE_TESTS)
+  enable_testing()
+  add_subdirectory(test)
+endif()

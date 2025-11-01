@@ -46,7 +46,8 @@
                 "strategy": "external"
             },
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE": "Debug"
+                "CMAKE_BUILD_TYPE": "Debug",
+                "ENABLE_TESTS": "ON"
             }
         },
         {
@@ -58,7 +59,8 @@
                 "strategy": "external"
             },
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE": "Debug"
+                "CMAKE_BUILD_TYPE": "Debug",
+                "ENABLE_TESTS": "ON"
             }
         },
         {

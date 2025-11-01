@@ -19,16 +19,8 @@ int main()
 	string search_prompt = api.parse_query
 		({
 			{
-				"set", ":",
-				"tle"
-			},
-			{
-				"is", ":",
-				"commander"
-			},
-			{
-				"color", "<=",
-				"uw"
+				"type", ":",
+				"land creature"
 			}
 		});
 
