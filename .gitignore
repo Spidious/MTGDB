@@ -368,3 +368,10 @@ FodyWeavers.xsd
 
 # vcpkg
 /vcpkg_installed/
+
+# UnitTesting output
+/Testing/
+
+# CMAKE
+/out/
+/build/
