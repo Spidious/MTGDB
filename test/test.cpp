@@ -63,15 +63,11 @@ TEST(JSON, LeftShiftFromObj)
 
 TEST(JSON, JsonAssignment)
 {
-    // APIResult from nlohmann::json
-    auto res = R"({"object":"custom"})"_json;
+    auto r = R"({"object":"custom"})"_json;
 
-    //APIResult res1 = res;
+    APIResult res = static_cast<APIResult>(r);
+
     EXPECT_EQ(res["object"], "custom");
-    //EXPECT_EQ(res1["object"], "custom");
-
-    // APIResultfrom APIResult
-
 }
 
 int main(int argc, char** argv) {

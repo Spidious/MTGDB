@@ -92,6 +92,14 @@ public:
 	/// <param name="json">The string JSON input</param>
 	explicit APIResult(const string& json = "{}");
 
+
+	/// <summary>
+	/// Return contents 
+	/// </summary>
+	string data() {
+		return this->dump();
+	}
+
 	/// <summary>
 	/// << operator override
 	/// </summary>
@@ -107,11 +115,9 @@ public:
 		return json::parse(this->data());
 	}
 
-	/// <summary>
-	/// Return contents 
-	/// </summary>
-	string data() {
-		return this->dump();
+	APIResult& operator=(const nlohmann::json& j) {
+		update_parse(j.dump());
+		return *this;
 	}
 
 	/// <summary>
