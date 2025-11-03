@@ -90,7 +90,7 @@ public:
 	/// JSON string input constructor
 	/// </summary>
 	/// <param name="json">The string JSON input</param>
-	APIResult(const string& json = "{}");
+	explicit APIResult(const string& json = "{}");
 
 	/// <summary>
 	/// << operator override
@@ -98,6 +98,11 @@ public:
 	/// <param name="str">The string JSON input</param>
 	/// <returns>Pointer to current APIResult</returns>
 	APIResult& operator<<(const string& str);
+
+	/// <summary>
+	/// Allows retrieval of json data
+	/// </summary>
+	using json::dump;
 
 	/// <summary>
 	/// Use base class operator in public access

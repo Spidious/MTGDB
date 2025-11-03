@@ -99,5 +99,19 @@
                 "CMAKE_BUILD_TYPE": "Release"
             }
         }
+    ],
+    "buildPresets": [
+        {
+            "name": "x64-linux-debug",
+            "displayName": "Linux Debug",
+            "configurePreset": "x64-linux-debug",
+            "targets": [ "mtgdb" ]
+        },
+        {
+            "name": "x64-linux-test",
+            "displayName": "Linux Test",
+            "configurePreset": "x64-linux-debug",
+            "targets": [ "tests" ]
+        }
     ]
 }
