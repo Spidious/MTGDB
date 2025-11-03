@@ -47,3 +47,4 @@ APIResult& APIResult::operator<<(const string& str)
 	update_parse(str);
 	return *this;
 }
+

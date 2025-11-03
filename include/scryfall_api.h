@@ -99,10 +99,20 @@ public:
 	/// <returns>Pointer to current APIResult</returns>
 	APIResult& operator<<(const string& str);
 
+	operator std::string() {
+		return data();
+	}
+
+	operator nlohmann::json() {
+		return json::parse(this->data());
+	}
+
 	/// <summary>
-	/// Allows retrieval of json data
+	/// Return contents 
 	/// </summary>
-	using json::dump;
+	string data() {
+		return this->dump();
+	}
 
 	/// <summary>
 	/// Use base class operator in public access

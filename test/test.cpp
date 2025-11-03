@@ -26,30 +26,55 @@ TEST(JSON, EmptyInit)
 TEST(JSON, ManualInit)
 {
     // create new result object
-    const std::string simple_json = R"({"object":"custom"})"_json;
+    const std::string simple_json = R"({"object":"custom"})";
     APIResult res(simple_json);
 
     // Check the object initialized properly
     EXPECT_EQ(res["object"], "custom");
 }
 
-
-TEST(JSON, InitFromJsonObject)
+// Test the JSON init from output of another 
+TEST(JSON, DataInit)
 {
     // Create the first res object
-    const std::string simple_json = R"({"object":"custom"})"_json;
-    const APIResult res(simple_json);
+    const std::string simple_json = R"({"object":"custom"})";
+    APIResult res(simple_json);
 
     // Copy value using constructor
-    APIResult res2(res.dump());
-
-    // Copy value using operator<<
-    APIResult res3;
-    res3 << res2.dump();
-
-    // Copy value by assignment
-    APIResult res4 = res3;
+    APIResult res2(res.data());
 
     // Check the final vs the original
-    EXPECT_EQ(res4["object"], res["object"]);
+    EXPECT_EQ(res2["object"], "custom");
+}
+
+TEST(JSON, LeftShiftFromObj)
+{
+    // Create the first res object
+    const std::string simple_json = R"({"object":"custom"})";
+    APIResult res(simple_json);
+
+    // Copy value using operator<<
+    APIResult res2;
+    res2 << res.data();
+
+    // Check the final vs the original
+    EXPECT_EQ(res2["object"], "custom");
+}
+
+TEST(JSON, JsonAssignment)
+{
+    // APIResult from nlohmann::json
+    auto res = R"({"object":"custom"})"_json;
+
+    APIResult res1 = res;
+    EXPECT_EQ(res["object"], "custom");
+    EXPECT_EQ(res1["object"], "custom");
+
+    // APIResultfrom APIResult
+
+}
+
+int main(int argc, char** argv) {
+    ::testing::InitGoogleTest(&argc, argv);
+    return RUN_ALL_TESTS();
 }
