@@ -1,9 +1,12 @@
 #include "scryfall_api.h"
 
+using namespace Scryfall;
+using namespace std;
+
 // Define the mutex
 std::mutex ScryfallAPI::api_mutex;
 
-static size_t write_callback(char* contents, size_t size, size_t nmemb, void* userdata) {
+static size_t Scryfall::write_callback(char* contents, size_t size, size_t nmemb, void* userdata) {
 	size_t totalSize = size * nmemb;
 	std::string* response = static_cast<std::string*>(userdata);
 	response->append(static_cast<char*>(contents), totalSize);
@@ -42,7 +45,7 @@ void ScryfallAPI::res_update(const exception* e, const int code)
 	ostringstream buffer;
 	buffer << "{\"object\":\"error\", \"code\":\""
 		   << code
-		   << "\", \"status\":404, \"details\":\"Runtime Exception: "
+		   << "\", \"status\":-2, \"details\":\"Runtime Exception: "
 		   << e->what() << "\"}";
 
 	res << buffer.str();

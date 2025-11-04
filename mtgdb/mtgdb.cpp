@@ -4,6 +4,7 @@
 #include "mtgdb.h"
 
 using namespace std;
+using namespace Scryfall;
 int main()
 {
 	// Open Database

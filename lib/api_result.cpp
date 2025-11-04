@@ -1,5 +1,8 @@
 #include "scryfall_api.h"
 
+using namespace Scryfall;
+using namespace std;
+
 // Initialize member variables and update json base
 APIResult::APIResult(const string& json) :
 	nlohmann::json(),
@@ -11,34 +14,58 @@ APIResult::APIResult(const string& json) :
 
 // Primary method for updating the contents of the object.
 void APIResult::update_parse(const string& str) {
-	if (str.empty() || str == "{}") {
+	if (str.empty()) {
 		// This will happen upon creation of the object unless a parameter is used in the constructor
-		return; 
+		throw std::invalid_argument("Empty string :: Must contain \"object\"");
 	}
 
 	try {
 		// Attempt to parse the JSON and update the body of the object
+		this->clear();
 		this->update(APIResult::parse(str));
 		const auto obj = (*this)["object"];
-		object_type = (obj == NULL) ? "" : obj;
+		const std::string tst_obj = obj;
+		if (obj.is_null() || !ObjectTypes.contains(obj)) throw std::invalid_argument("Invalid/NULL object found in JSON"); // Assert that there must be a valid object in the JSON
+		object_type = obj;
 	}
-	catch (const nlohmann::json::parse_error e)
+	catch (const exception e)
 	{
-		// Failure to parse the json
-		string r = e.what();
-		throw invalid_argument("Unable to parse JSON: " + r);
-	}
-	catch (const std::exception& e)
-	{
-		// Unknown exception failure
-		string r = e.what();
-		throw invalid_argument("Unable to handle parameter >> " + r);
+		e_handle_exception(e);
 	}
 	catch (...)
 	{
 		// Unknown exception.
-		throw invalid_argument("Unknown parse/update error");
+		auto e = std::runtime_error("Unknown parse error");
+		e_handle_exception(e);
 	}
+}
+
+void APIResult::e_handle_exception(const std::exception& e)
+{
+	// Update body with json error
+	ostringstream buffer;
+	buffer << "{\"object\":\"error\", \"code\":\"exception\", \"status\":-1, \"details\":\"Runtime Exception: "
+		   << e.what() << "\"}";
+	update_parse(buffer.str());
+
+	// Update status with -1
+	status = -1;
+	e_ptr = &e;
+}
+
+int APIResult::getStatus() const
+{
+	return status;
+}
+
+const std::exception* APIResult::getException() const
+{
+	return e_ptr;
+}
+
+string APIResult::data() const
+{
+	return this->dump();
 }
 
 APIResult& APIResult::operator<<(const string& str)
