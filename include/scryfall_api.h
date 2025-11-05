@@ -12,6 +12,7 @@
 #include <nlohmann/json.hpp>
 #include <vector>
 #include <unordered_set>
+#include <memory>
 // #include <sstream>
 
 #define SCRYFALL_API_DELAY_MS 75 // Must be 50-100ms between requests
@@ -59,6 +60,60 @@ namespace Scryfall
 		string op;
 		string value;
 	} typedef searchitem;
+
+	// ###################################################################
+	// Base Scryfall Object
+	class ScryfallObject : protected json
+	{
+		const std::string obj_type;
+
+	protected:
+		static std::unique_ptr<ScryfallObject> generate_error(const exception& e, const int status);
+
+	public:
+		explicit ScryfallObject(const json& j);
+		static std::unique_ptr<ScryfallObject> from_json(const string& json);
+		std::string get_object_type() const;
+		virtual ~ScryfallObject() = default;
+	};
+	// Specific Scryfall Error object
+	class ScryError final: public ScryfallObject
+	{
+	public:
+		explicit ScryError(const json& j) : ScryfallObject(j) {}
+		std::string what();
+		~ScryError() override;
+	};
+	// Specific Scryfall List object
+	class ScryList final: public ScryfallObject
+	{
+	public:
+		explicit ScryList(const json& j) : ScryfallObject(j) {}
+		~ScryList() override;
+	};
+	// Specific Scryfall Set object
+	class ScrySet final: public ScryfallObject
+	{
+	public:
+		explicit ScrySet(const json& j) : ScryfallObject(j) {}
+		~ScrySet() override;
+	};
+	// Specific Scryfall Card object
+	class ScryCard final: public ScryfallObject
+	{
+	public:
+		explicit ScryCard(const json& j) : ScryfallObject(j) {}
+		~ScryCard() override;
+	};
+	// Specific Scryfall Ruling object
+	class ScryRuling final: public ScryfallObject
+	{
+	public:
+		explicit ScryRuling(const json& j) : ScryfallObject(j) {}
+		~ScryRuling() override;
+	};
+
+	// ###################################################################
 
 	/// <summary>
 	/// Represents the result of an API call, inheriting from std::string.
