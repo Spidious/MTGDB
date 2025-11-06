@@ -17,6 +17,7 @@ int main()
 	//auto result1 = api.BasicSearch("5b94f37f-ebdf-4b79-a615-58331d27cf4e");
 	//auto result2 = api.BasicSearch("random");
 
+
 	string search_prompt = api.parse_query
 		({
 			{
@@ -27,31 +28,30 @@ int main()
 
 	cout << "SCRYFALL SEARCH: " << search_prompt << endl;
 
+
 	std::unique_ptr<ScryfallObject> res = api.AdvancedSearch(search_prompt);
 
 
-	const APIResult& result = api.GetResult();
-
-
-	if (result["object"] == "error")
+	if (res->get_attr("object") == "error")
 	{
 		cerr << "API Call failed with: "
 			<< endl
 			<< ">> Code "
-			<< result["code"]
+			<< res->get_attr("code")
 			<< endl
 			<< ">> Description: "
-			<< result["details"]
+			<< res->get_attr("details")
 			<< endl;
 	}
 
-	if (result["object"] == "list")
+	if (res->get_attr("object") == "list")
 	{
-		cout << "Total Results: " << result["total_cards"] << endl;
-		for (int i = 0; i < result["total_cards"]; i++)
-		{
-			cout << "[" << i+1 << "] " << result["data"][i]["name"] << endl;
-		}
+		cout << "Total Results: " << res->get_attr("total_cards") << endl;
+		// auto data = res->get_data();
+		// for (auto res->)
+		// {
+		// 	cout << "[" << i+1 << "] " << res->get_attr("data")[i]["name"] << endl;
+		// }
 	}
 
 	return 0;

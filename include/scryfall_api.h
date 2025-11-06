@@ -69,12 +69,13 @@ namespace Scryfall
 		const std::string obj_type;
 
 	protected:
-		static std::unique_ptr<ScryfallObject> generate_error(const exception& e, const int status);
+		static std::unique_ptr<ScryfallObject> generate_error(const std::string err, const int status);
 
 	public:
 		explicit ScryfallObject(const json& j);
 		static std::unique_ptr<ScryfallObject> from_json(const string& json);
 		std::string get_object_type() const;
+		std::string get_attr(const std::string& arg) const;
 		virtual ~ScryfallObject() = default;
 	};
 
@@ -98,6 +99,7 @@ namespace Scryfall
 
 	public:
 		explicit ScryList(const json& j);
+		std::set<std::shared_ptr<ScryfallObject>> get_data() const; // TODO: Delete this
 		~ScryList() override = default;
 	};
 
@@ -126,95 +128,6 @@ namespace Scryfall
 	};
 
 	// ###################################################################
-
-	/// <summary>
-	/// Represents the result of an API call, inheriting from std::string.
-	/// Specifically designed to parse and handle Scryfall API responses.
-	/// </summary>
-	class APIResult : private json{
-	private:
-
-		/// <summary>
-		/// Holds type of json object
-		/// Available types: "error", "list", "set", "card", "ruling", "card_symbol", "catalog", "bulk_data"
-		/// </summary>
-		string object_type;
-
-		/// <summary>
-		/// Holds status codes. <0 = exceptions && >0 = http status
-		/// </summary>
-		int status;
-
-		/// <summary>
-		/// Hold a pointer to an exception (when status <0)
-		/// </summary>
-		const std::exception* e_ptr;
-
-		/// <summary>
-		/// Parse and update a new string
-		/// Primary point of entry for JSON
-		/// </summary>
-		/// <param name="str">The string JSON input</param>
-		void update_parse(const string& str);
-
-		void e_handle_exception(const std::exception& e);
-
-	public:
-
-
-		/// <summary>
-		/// JSON string input constructor
-		/// </summary>
-		/// <param name="json">The string JSON input</param>
-		APIResult(const string& json = R"({"object":"empty"})");
-
-		/// <summary>
-		/// Get current json status
-		/// </summary>
-		/// <returns> Object status, http status or custom </returns>
-		int getStatus() const;
-
-		/// <summary>
-		/// Get a pointer to the current error
-		/// </summary>
-		/// <returns>pointer to the thrown error</returns>
-		const std::exception* getException() const;
-
-		/// <summary>
-		/// Return contents
-		/// </summary>
-		string data() const;
-
-		/// <summary>
-		/// << operator override
-		/// </summary>
-		/// <param name="str">The string JSON input</param>
-		/// <returns>Pointer to current APIResult</returns>
-		APIResult& operator<<(const string& str);
-
-		/// <summary>
-		/// Cast operator for APIResult -> std::string
-		/// </summary>
-		operator std::string() {
-			return data();
-		}
-
-
-		APIResult& operator=(const nlohmann::json& j) {
-			update_parse(j.dump());
-			return *this;
-		}
-
-		/// <summary>
-		/// Use base class operator in public access
-		/// </summary>
-		using json::operator[];
-
-		/// <summary>
-		/// Specifies default destructor
-		/// </summary>
-		~APIResult() = default;
-	};
 
 	/// <summary>
 	/// Callback function for writing received data, typically used with data transfer libraries such as libcurl.
@@ -307,9 +220,7 @@ namespace Scryfall
 		/// </summary>
 		/// <param name="query">String search query</param>
 		/// <returns>Raw API Result</returns>
-		void AdvancedSearch(const string query);
-
-		const APIResult& GetResult() const;
+		std::unique_ptr<ScryfallObject> AdvancedSearch(const string query);
 
 
 
