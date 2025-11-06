@@ -11,6 +11,7 @@
 #include <curl/curl.h>
 #include <nlohmann/json.hpp>
 #include <vector>
+#include <set>
 #include <unordered_set>
 #include <memory>
 // #include <sstream>
@@ -25,7 +26,7 @@ using namespace nlohmann;
 
 namespace Scryfall
 {
-	const unordered_set<string> ObjectTypes = {
+	const std::unordered_set<string> ObjectTypes = {
 		"empty", "error", "list", "set", "card", "ruling", "card_symbol", "catalog", "bulk_data"
 	};
 
@@ -79,16 +80,22 @@ namespace Scryfall
 	// Specific Scryfall Error object
 	class ScryError final: public ScryfallObject
 	{
+		const std::string err_msg;
 	public:
-		explicit ScryError(const json& j) : ScryfallObject(j) {}
+		explicit ScryError(const json& j);
 		std::string what();
 		~ScryError() override;
 	};
 	// Specific Scryfall List object
+	template <typename T>
 	class ScryList final: public ScryfallObject
 	{
+		std::string next_url;
+		std::set<T> data;
+		std::unique_ptr<ScryfallObject> call_next_list() const;
+
 	public:
-		explicit ScryList(const json& j) : ScryfallObject(j) {}
+		explicit ScryList(const json& j);
 		~ScryList() override;
 	};
 	// Specific Scryfall Set object
@@ -261,6 +268,7 @@ namespace Scryfall
 		/// <param name="buffer">Buffer in which to put the
 		/// <returns>Result of the API call</returns>
 		CURLcode call_api(const string& path, const void* buffer);
+		template <typename T> friend unique_ptr<ScryfallObject> ScryList<T>::call_next_list() const;
 
 		/// <summary>
 		/// Return a APIResult representing a failed request/result

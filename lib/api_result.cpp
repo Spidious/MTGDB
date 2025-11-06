@@ -60,6 +60,31 @@ std::string ScryfallObject::get_object_type() const
 	return obj_type;
 }
 
+ScryError::ScryError(const json& j) : ScryfallObject(j), err_msg((*this)["description"]) {}
+
+std::string ScryError::what()
+{
+	// Build output "code (status): details"
+	std::ostringstream o_err;
+	o_err << (*this)["code"] << " ("
+		<< (*this)["status"] << "): "
+		<< (*this)["details"];
+
+	// return the string
+	return o_err.str();
+}
+
+template <typename T> ScryList<T>::ScryList(const json& j) : ScryfallObject(j), next_url((*this)["next_page"]) {}
+
+template <typename T> std::unique_ptr<ScryfallObject> ScryList<T>::call_next_list() const
+{
+	ScryfallAPI api;
+	std::string n_page;
+	api.call_api((*this)["next_page"], &n_page);
+
+	return std::make_unique<ScryfallObject>(n_page);
+}
+
 // ###################################################################
 
 
