@@ -27,7 +27,7 @@ int main()
 
 	cout << "SCRYFALL SEARCH: " << search_prompt << endl;
 
-	api.AdvancedSearch(search_prompt);
+	std::unique_ptr<ScryfallObject> res = api.AdvancedSearch(search_prompt);
 
 
 	const APIResult& result = api.GetResult();

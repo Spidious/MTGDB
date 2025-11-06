@@ -81,10 +81,11 @@ namespace Scryfall
 	// Specific Scryfall Error object
 	class ScryError final: public ScryfallObject
 	{
+		std::string err_msg;
 	public:
-		explicit ScryError(const json& j) : ScryfallObject(j) {}
+		explicit ScryError(const json& j);
 		std::string what();
-		~ScryError() override;
+		~ScryError() override = default;
 	};
 
 	// Specific Scryfall List object
@@ -96,8 +97,8 @@ namespace Scryfall
 		std::unique_ptr<ScryfallObject> call_next_list() const;
 
 	public:
-		explicit ScryList(const json& j) : ScryfallObject(j) {}
-		~ScryList() override;
+		explicit ScryList(const json& j);
+		~ScryList() override = default;
 	};
 
 	// Specific Scryfall Set object
@@ -105,7 +106,7 @@ namespace Scryfall
 	{
 	public:
 		explicit ScrySet(const json& j) : ScryfallObject(j) {}
-		~ScrySet() override;
+		~ScrySet() override = default;
 	};
 
 	// Specific Scryfall Card object
@@ -113,7 +114,7 @@ namespace Scryfall
 	{
 	public:
 		explicit ScryCard(const json& j) : ScryfallObject(j) {}
-		~ScryCard() override;
+		~ScryCard() override = default;
 	};
 
 	// Specific Scryfall Ruling object
@@ -121,7 +122,7 @@ namespace Scryfall
 	{
 	public:
 		explicit ScryRuling(const json& j) : ScryfallObject(j) {}
-		~ScryRuling() override;
+		~ScryRuling() override = default;
 	};
 
 	// ###################################################################
@@ -268,8 +269,7 @@ namespace Scryfall
 		/// <returns>Result of the API call</returns>
 		CURLcode call_api(const string& path, const void* buffer);
 
-		// Declare a friend for call_next_list in ScryList
-		friend template <typename T> std::unique_ptr<ScryfallObject> ScryList<T>::call_next_list() const;
+		friend ScryList;
 
 	public:
 
