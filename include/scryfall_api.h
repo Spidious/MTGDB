@@ -26,7 +26,7 @@ using namespace nlohmann;
 
 namespace Scryfall
 {
-	const std::unordered_set<string> ObjectTypes = {
+	const unordered_set<string> ObjectTypes = {
 		"empty", "error", "list", "set", "card", "ruling", "card_symbol", "catalog", "bulk_data"
 	};
 
@@ -77,27 +77,29 @@ namespace Scryfall
 		std::string get_object_type() const;
 		virtual ~ScryfallObject() = default;
 	};
+
 	// Specific Scryfall Error object
 	class ScryError final: public ScryfallObject
 	{
-		const std::string err_msg;
 	public:
-		explicit ScryError(const json& j);
+		explicit ScryError(const json& j) : ScryfallObject(j) {}
 		std::string what();
 		~ScryError() override;
 	};
+
 	// Specific Scryfall List object
-	template <typename T>
 	class ScryList final: public ScryfallObject
 	{
 		std::string next_url;
-		std::set<T> data;
+		std::set<std::shared_ptr<ScryfallObject>> data;
+
 		std::unique_ptr<ScryfallObject> call_next_list() const;
 
 	public:
-		explicit ScryList(const json& j);
+		explicit ScryList(const json& j) : ScryfallObject(j) {}
 		~ScryList() override;
 	};
+
 	// Specific Scryfall Set object
 	class ScrySet final: public ScryfallObject
 	{
@@ -105,6 +107,7 @@ namespace Scryfall
 		explicit ScrySet(const json& j) : ScryfallObject(j) {}
 		~ScrySet() override;
 	};
+
 	// Specific Scryfall Card object
 	class ScryCard final: public ScryfallObject
 	{
@@ -112,6 +115,7 @@ namespace Scryfall
 		explicit ScryCard(const json& j) : ScryfallObject(j) {}
 		~ScryCard() override;
 	};
+
 	// Specific Scryfall Ruling object
 	class ScryRuling final: public ScryfallObject
 	{
@@ -242,11 +246,6 @@ namespace Scryfall
 		CURL* cli;
 
 		/// <summary>
-		/// Store the result of the API call
-		/// </summary>
-		APIResult res;
-
-		/// <summary>
 		/// Static function to encode strings with % encoding for URLs
 		/// </summary>
 		/// <param name="str_value">String value to be encoded</param>
@@ -268,23 +267,9 @@ namespace Scryfall
 		/// <param name="buffer">Buffer in which to put the
 		/// <returns>Result of the API call</returns>
 		CURLcode call_api(const string& path, const void* buffer);
-		template <typename T> friend unique_ptr<ScryfallObject> ScryList<T>::call_next_list() const;
 
-		/// <summary>
-		/// Return a APIResult representing a failed request/result
-		/// </summary>
-		/// <param name="e">Pointer to the exception</param>
-		/// <param name="code">custom error code (default -1)</param>
-		/// <returns>APIResult object with status set to fail code</returns>
-		void res_update(const exception* e, const int code = -1);
-
-		/// <summary>
-		/// Return an APIResult parsed with JSON
-		/// Creates necessary objects for returned data
-		/// </summary>
-		/// <param name="json">string to raw JSON</param>
-		/// <returns></returns>
-		void res_update(const string& json);
+		// Declare a friend for call_next_list in ScryList
+		friend template <typename T> std::unique_ptr<ScryfallObject> ScryList<T>::call_next_list() const;
 
 	public:
 
@@ -306,7 +291,7 @@ namespace Scryfall
 		/// </summary>
 		/// <param name="id">Scryfall ID or Keyword</param>
 		/// <returns>Raw API Result</returns>
-		void BasicSearch(const string& id);
+		std::unique_ptr<ScryfallObject> BasicSearch(const string& id);
 
 		/// <summary>
 		/// Performs a basic search using the specified name, type, and optional set and collection number.
@@ -315,8 +300,7 @@ namespace Scryfall
 		/// <param name="type">The type to search for.</param>
 		/// <param name="set">The set to search within (optional).</param>
 		/// <param name="collect_num">The collection number to search for (optional).</param>
-		/// <returns>Raw API Result</returns>
-		void BasicSearch(const string& name, const string& type, const string& set = "", int collect_num = 0);
+		std::unique_ptr<ScryfallObject> BasicSearch(const string& name, const string& type, const string& set = "", int collect_num = 0);
 
 		/// <summary>
 		/// Performs a scryfall search using the advanced query syntax on https://scryfall.com/docs/syntax

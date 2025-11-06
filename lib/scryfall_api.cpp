@@ -39,36 +39,6 @@ ScryfallAPI::~ScryfallAPI() {
 	curl_easy_cleanup(cli);
 }
 
-// Parse exceptions into API result
-void ScryfallAPI::res_update(const exception* e, const int code)
-{
-	ostringstream buffer;
-	buffer << "{\"object\":\"error\", \"code\":\""
-		   << code
-		   << "\", \"status\":-2, \"details\":\"Runtime Exception: "
-		   << e->what() << "\"}";
-
-	res << buffer.str();
-}
-
-void ScryfallAPI::res_update(const string& json) {
-
-	try
-	{
-		res << json;
-	}
-	catch (invalid_argument e)
-	{
-		cerr << "Invalid json argument: " << e.what() << endl << json << endl;
-		res_update(&e);
-	}
-	catch (...)
-	{
-		cerr << "Unable to update result" << endl;
-		res_update(new exception());
-	}
-}
-
 
 // Encode the URL such that it follows % encoding
 // https://en.wikipedia.org/wiki/Percent-encoding
@@ -121,20 +91,17 @@ call_api(const string& path, const void* buffer)
 	return res;
 }
 
-
-
-
 // Search Scryfall by it's ID
-void ScryfallAPI::
+std::unique_ptr<ScryfallObject> ScryfallAPI::
 BasicSearch(const string& id) {
 	string api_res;
 	call_api(API_ENDPOINT_ID + id, &api_res);
 
 	// Store the API result
-	res_update(api_res);
+	return ScryfallObject::from_json(api_res);
 }
 
-void ScryfallAPI::
+std::unique_ptr<ScryfallObject> ScryfallAPI::
 BasicSearch(const string& name, const string& type, const string& set , const int collect_num) {
 	// Start search stream
 	std::ostringstream oss;
@@ -153,13 +120,7 @@ BasicSearch(const string& name, const string& type, const string& set , const in
 	call_api(API_ENDPOINT_SEARCH + url_encode(oss.str()), &api_res); // Error checking moved (May need to put this back in an if statement)
 
 	// Store the API result
-	res_update(api_res);
-}
-
-const APIResult& ScryfallAPI::
-GetResult() const
-{
-	return this->res;
+	return ScryfallObject::from_json(api_res);
 }
 
 
@@ -203,8 +164,9 @@ string ScryfallAPI::parse_query(vector<searchitem> queries) {
 	return parse_query(queries) + ((queries.size()) ? "+" : "") + parsed_query.str();
 }
 
-void ScryfallAPI::AdvancedSearch(const string query) {
+std::unique_ptr<ScryfallObject> ScryfallAPI::AdvancedSearch(const string query) {
 	string api_res;
 	call_api(API_ENDPOINT_SEARCH + url_encode(query), &api_res);
-	this->res << api_res;
+
+	return ScryfallObject::from_json(api_res);
 }
