@@ -4,9 +4,16 @@ using namespace Scryfall;
 using namespace std;
 
 // ###################################################################
-ScryfallObject::ScryfallObject(const json& j) : json(j), obj_type((*this)["object"]) {}
+ScryfallObject::
+ScryfallObject(const json& j) :
+	json(j), 
+	obj_type((*this)["object"]) 
+{
+	
+}
 
-std::unique_ptr<ScryfallObject> ScryfallObject::from_json(const string& json)
+std::unique_ptr<ScryfallObject> ScryfallObject::
+from_json(const string& json)
 {
 	try
 	{
@@ -43,7 +50,8 @@ std::unique_ptr<ScryfallObject> ScryfallObject::from_json(const string& json)
 	}
 }
 
-std::unique_ptr<ScryfallObject> ScryfallObject::generate_error(const exception& e, const int status)
+std::unique_ptr<ScryfallObject> ScryfallObject::
+generate_error(const exception& e, const int status)
 {
 	// Create json Error and pass to ScryError
 	std::ostringstream err_msg;
@@ -55,14 +63,22 @@ std::unique_ptr<ScryfallObject> ScryfallObject::generate_error(const exception& 
 	return std::make_unique<ScryError>(err_msg.str());
 }
 
-std::string ScryfallObject::get_object_type() const
+std::string ScryfallObject::
+get_object_type() const
 {
 	return obj_type;
 }
 
-ScryError::ScryError(const json& j) : ScryfallObject(j), err_msg((*this)["description"]) {}
+ScryError::
+ScryError(const json& j) : 
+	ScryfallObject(j), 
+	err_msg((*this)["description"]) 
+{
 
-std::string ScryError::what()
+}
+
+std::string ScryError::
+what()
 {
 	// Build output "code (status): details"
 	std::ostringstream o_err;
@@ -74,16 +90,29 @@ std::string ScryError::what()
 	return o_err.str();
 }
 
-template <typename T> ScryList<T>::ScryList(const json& j) : ScryfallObject(j), next_url((*this)["next_page"]) {}
+ScryList::
+ScryList(const json& j) : 
+	ScryfallObject(j), 
+	next_url((*this)["next_page"]) 
+{
+	// Populate the dataset
+	// Handle each item separately
+	for (const json& item : (*this)["data"]) {
+		data.insert(from_json(item));
+	}
+}
 
-template <typename T> std::unique_ptr<ScryfallObject> ScryList<T>::call_next_list() const
+std::unique_ptr<ScryfallObject> ScryList::
+call_next_list() const
 {
 	ScryfallAPI api;
 	std::string n_page;
 	api.call_api((*this)["next_page"], &n_page);
 
-	return std::make_unique<ScryfallObject>(n_page);
+	return from_json(n_page);
 }
+	
+
 
 // ###################################################################
 
