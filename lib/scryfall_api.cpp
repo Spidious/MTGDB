@@ -101,29 +101,6 @@ BasicSearch(const string& id) {
 	return ScryfallObject::from_json(api_res);
 }
 
-std::unique_ptr<ScryfallObject> ScryfallAPI::
-BasicSearch(const string& name, const string& type, const string& set , const int collect_num) {
-	// Start search stream
-	std::ostringstream oss;
-	// Add name and type searches
-	oss << "name:" << name
-		<< "+type:" << type;
-
-	// Add optional searches
-	if (set != "")
-		oss << "+set:" << set;
-	if (collect_num > 0)
-		oss << "+number:" << collect_num;
-
-	// Call and return the result of the API call.
-	string api_res;
-	call_api(API_ENDPOINT_SEARCH + url_encode(oss.str()), &api_res); // Error checking moved (May need to put this back in an if statement)
-
-	// Store the API result
-	return ScryfallObject::from_json(api_res);
-}
-
-
 string ScryfallAPI::parse_query(vector<searchitem> queries) {
 	// Base case (Check that queries is empty)
 	if (!queries.size()) return "";
