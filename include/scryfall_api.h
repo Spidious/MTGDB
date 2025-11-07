@@ -64,17 +64,39 @@ namespace Scryfall
 
 	// ###################################################################
 
-	// Base Scryfall Object
+	///	<summary>
+	///	Base object to hold JSON information returned by the Scryfall API
+	///	</summary>
 	class ScryfallObject : protected json
 	{
+		///<summary>Base information object type</summary>
 		const std::string obj_type;
 
 	protected:
-		static std::unique_ptr<ScryfallObject> generate_error(const std::string err, const int status);
+		///<summary>
+		///Generate a json Error
+		///</summary>
+		///<param name="err">String description of the error</param>
+		///<param name="status">custom integer status (Default: -1)</param>
+		///<returns>Unique ScryfallObject pointer (may be of a derived class)</returns>
+		static std::unique_ptr<ScryfallObject> generate_error(const std::string err, const int status = -1);
 
 	public:
+		///<summary>
+		///Constructor for ScryfallObject
+		///</summary>
+		///<param name="j">Json object</param>
 		explicit ScryfallObject(const json& j);
+
+		///<summary>
+		///Factory function to determine appropriate derived class
+		///Overloaded for JSON string
+		///</summary>
+		///<param name="json">JSON represented as string object</param>
+		///<returns>Unique pointer to ScryfallObject</returns>
+		///<remarks>Returns a ScryError upon fail</remarks>
 		static std::unique_ptr<ScryfallObject> from_json(const string& json);
+
 		static std::unique_ptr<ScryfallObject> from_json(const json& json);
 		std::string get_object_type() const;
 		virtual std::string get_name() const;
