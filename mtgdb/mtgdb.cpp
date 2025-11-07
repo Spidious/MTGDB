@@ -29,29 +29,30 @@ int main()
 	cout << "SCRYFALL SEARCH: " << search_prompt << endl;
 
 
-	std::unique_ptr<ScryfallObject> res = api.AdvancedSearch(search_prompt);
+	std::unique_ptr<ScryfallObject> res = std::move(api.AdvancedSearch(search_prompt));
 
 
-	if (res->get_attr("object") == "error")
+	if (res->get_attr<string>("object") == "error")
 	{
 		cerr << "API Call failed with: "
 			<< endl
 			<< ">> Code "
-			<< res->get_attr("code")
+			<< res->get_attr<string>("code")
 			<< endl
 			<< ">> Description: "
-			<< res->get_attr("details")
+			<< res->get_attr<string>("details")
 			<< endl;
 	}
 
-	if (res->get_attr("object") == "list")
+	if (res->get_attr<string>("object") == "list")
 	{
-		cout << "Total Results: " << res->get_attr("total_cards") << endl;
-		// auto data = res->get_data();
-		// for (auto res->)
-		// {
-		// 	cout << "[" << i+1 << "] " << res->get_attr("data")[i]["name"] << endl;
-		// }
+		auto res_list(dynamic_cast<ScryList*>(res.release()));
+
+		cout << "Total Results: " << res_list->size() << endl;
+		for (int i = 0; i < res_list->size(); i++)
+		{
+			cout << "[" << i+1 << "] " << res_list->at(i)->get_name() << endl;
+		}
 	}
 
 	return 0;

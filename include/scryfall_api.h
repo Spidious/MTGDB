@@ -63,6 +63,7 @@ namespace Scryfall
 	} typedef searchitem;
 
 	// ###################################################################
+
 	// Base Scryfall Object
 	class ScryfallObject : protected json
 	{
@@ -74,8 +75,12 @@ namespace Scryfall
 	public:
 		explicit ScryfallObject(const json& j);
 		static std::unique_ptr<ScryfallObject> from_json(const string& json);
+		static std::unique_ptr<ScryfallObject> from_json(const json& json);
 		std::string get_object_type() const;
-		std::string get_attr(const std::string& arg) const;
+		virtual std::string get_name() const;
+		template <typename T> T get_attr(const std::string& arg, const T& default_value = T{}) const {
+			return this->value(arg, default_value);
+		}
 		virtual ~ScryfallObject() = default;
 	};
 
@@ -93,13 +98,14 @@ namespace Scryfall
 	class ScryList final: public ScryfallObject
 	{
 		std::string next_url;
-		std::set<std::shared_ptr<ScryfallObject>> data;
+		std::vector<std::shared_ptr<ScryfallObject>> data;
 
 		std::unique_ptr<ScryfallObject> call_next_list() const;
 
 	public:
 		explicit ScryList(const json& j);
-		std::set<std::shared_ptr<ScryfallObject>> get_data() const; // TODO: Delete this
+		int size() const;
+		std::shared_ptr<ScryfallObject> at(int index) const;
 		~ScryList() override = default;
 	};
 
@@ -116,6 +122,7 @@ namespace Scryfall
 	{
 	public:
 		explicit ScryCard(const json& j) : ScryfallObject(j) {}
+		std::string get_name() const override;
 		~ScryCard() override = default;
 	};
 
