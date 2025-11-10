@@ -46,7 +46,7 @@ int main()
 
 	if (res->get_attr<string>("object") == "list")
 	{
-		auto res_list(dynamic_cast<ScryList*>(res.release()));
+		std::unique_ptr<ScryList> res_list = ScryCast<ScryfallObject, ScryList>(res);
 
 		cout << "Total Results: " << res_list->size() << endl;
 		for (int i = 0; i < res_list->size(); i++)

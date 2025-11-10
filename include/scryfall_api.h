@@ -93,7 +93,7 @@ namespace Scryfall
 	static size_t write_callback(char* ptr, size_t size, size_t nmemb, void* userdata);
 
 	/********************************************************************************************************
-	* Scryfall Object and derived classes																	*
+	* Scryfall Object and derived classes																*
 	********************************************************************************************************/
 
 	/**
@@ -304,6 +304,23 @@ namespace Scryfall
 		 */
 		~ScryRuling() override = default;
 	};
+
+	/**
+	 * Cast a Scryfall Object from SrcType to DstType
+	 * @tparam SrcType Type to be cast from (Default: ScryfallObject)
+	 * @tparam DstType Type to be cast to
+	 * @param scry_obj The object to be cast
+	 * @return Unique pointer being moved through the return
+	 */
+	template <typename SrcType = ScryfallObject, typename DstType>
+	std::unique_ptr<DstType> ScryCast(std::unique_ptr<SrcType>& scry_obj)
+	{
+		// 1. Release pointer from original unique_ptr
+		// 2. Cast that pointer to DstType
+		// 3. Create another unique_ptr on that cast pointer
+		// 4. Move Initiate the move for that pointer
+		return std::move(std::unique_ptr<DstType>(dynamic_cast<DstType*>(scry_obj.release())));
+	}
 
 	/********************************************************************************************************
 	* Scryfall API Wrapper																					*
