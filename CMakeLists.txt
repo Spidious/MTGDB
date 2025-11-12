@@ -1,7 +1,7 @@
 ﻿# CMakeList.txt : Top-level CMake project file, do global configuration
 # and include sub-projects here.
 #
-cmake_minimum_required (VERSION 3.8)
+cmake_minimum_required (VERSION 3.14)
 
 set(CMAKE_CXX_STANDARD 20)
 SET(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -13,7 +13,6 @@ if (POLICY CMP0141)
 endif()
 
 project ("mtgdb")
-
 
 # Link SQLite3
 add_library(sqlite3 lib/sqlite3.c)
@@ -27,7 +26,6 @@ target_include_directories(db_interface PUBLIC include)
 #Link Scryfall API Wrapper
 add_library(scryfall_api lib/scryfall_api.cpp lib/api_result.cpp)
 target_include_directories(scryfall_api PUBLIC include)
-
 
 #Find vcpkg packages
 find_package(CURL REQUIRED)

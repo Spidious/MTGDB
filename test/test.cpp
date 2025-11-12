@@ -113,7 +113,7 @@ TEST(API, InvalidCard)
     EXPECT_NE(res.getException(), nullptr);
 }
 
-int main(int argc, char** argv) {
+int cli_handler(int argc, char** argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
 }
