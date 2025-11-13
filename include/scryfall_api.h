@@ -70,7 +70,7 @@ namespace Scryfall
 	};
 
 	/**
-	 * Search item used in Scrfall API searches
+	 * Search item used in Scryfall API searches
 	 */
 	struct SearchItem {
 		string field;

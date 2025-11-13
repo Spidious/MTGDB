@@ -5,6 +5,7 @@
 #include <functional>
 #include <unordered_map>
 #include <scryfall_api.h>
+#include <regex>
 
 // Global Param options varaible
 inline cxxopts::Options PARAM_OPTS("MTGDB", "Scryfall Search and Inventory Database Management System");
