@@ -13,11 +13,13 @@ inline cxxopts::Options PARAM_OPTS("MTGDB", "Scryfall Search and Inventory Datab
 // CMD handler functions
 int cmd_search(const cxxopts::ParseResult& result);
 int cmd_random(const cxxopts::ParseResult& result);
+int cmd_id(const cxxopts::ParseResult& result);
 
 // Dispatch map table for commands to be run
 inline std::unordered_map<std::string, int(*)(const cxxopts::ParseResult&)> exec_handlers = {
     {"search", cmd_search},
-    {"random", cmd_random}
+    {"random", cmd_random},
+    {"id", cmd_id}
 };
 
 // Primary cli handler

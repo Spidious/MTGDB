@@ -83,6 +83,29 @@ int cmd_random(const cxxopts::ParseResult& result) {
     }
 }
 
+int cmd_id(const cxxopts::ParseResult& result)
+{
+    try
+    {
+        // Call the ID to the API
+        // todo: Create a regex verification
+        Scryfall::ScryfallAPI api;
+        auto res = api.BasicSearch(result["query"].as<std::string>());
+
+        // Print out the name of the card
+        auto card_res = Scryfall::ScryCast<Scryfall::ScryfallObject, Scryfall::ScryCard>(res);
+        std::cout << "Card by ID: " << card_res->get_name() << std::endl;
+
+        // Return success
+        return 0;
+    }
+    catch (...)
+    {
+        // Return fail
+        return -1;
+    }
+}
+
 
 int cli_handler (int argc, char * argv[])
 {
