@@ -1,12 +1,15 @@
 #include <cli_handler.h>
 
-std::vector<Scryfall::SearchItem> search_parse_args(std::string arg)
+/**
+ * Parse arguments from comma separated string to Scryfall::SarchItems
+ * @param arg comma separated string of search args
+ * @return vector of SearchItems
+ */
+std::vector<Scryfall::SearchItem> scry_search_parse_args(std::string arg)
 {
     std::vector<Scryfall::SearchItem> ss;
-    // Tokenize the data
-    // char* token_value = strtok(arg.data(), ",");
 
-    // Compile search fields into a list separated by |
+    // Compile search fields into a list separated by | (RegEx or)
     std::string search_fields;
     for (auto field : Scryfall::SearchFields)
     {
@@ -14,7 +17,7 @@ std::vector<Scryfall::SearchItem> search_parse_args(std::string arg)
     }
     search_fields.pop_back();
 
-    // Compile search ops into a list separated by |
+    // Compile search ops into a list separated by | (RegEx or)
     std::string search_ops;
     for (auto op : Scryfall::SearchOps)
     {
@@ -38,33 +41,50 @@ std::vector<Scryfall::SearchItem> search_parse_args(std::string arg)
     return ss;
 }
 
+/**
+ * Definition of "search" subcommand
+ * @param result CLI arg object
+ * @return integer status
+ */
 int cmd_search(const cxxopts::ParseResult& result) {
+    // Try Catch block to allow failure
     try
     {
+        // Create an API object, then parse the query
         Scryfall::ScryfallAPI api;
-        std::string query = api.parse_query(search_parse_args(result["query"].as<std::string>()));
-        auto res = api.AdvancedSearch(query);
+        std::string query = api.parse_query(scry_search_parse_args(result["query"].as<std::string>()));
+
+        // Call the query, cast result from generic to list object
+        auto res = api.CardSearch(query);
         auto list_res = Scryfall::ScryCast<Scryfall::ScryfallObject, Scryfall::ScryList>(res);
 
+        // Iterate over the list Print out the ID followed by card name
         for (int i = 0; i < list_res->size(); i++)
         {
             std::cout << "[" << i << "] " << list_res->at(i)->get_attr("id", std::string("")) << " -- " << list_res->at(i)->get_name() << endl;
         }
 
+        // Return Successful
         return 0;
     }
     catch (...)
     {
+        // Return Fail
         return -1;
     }
 }
 
+/**
+ * Definition of "random" subcommand
+ * @param result CLI arg object
+ * @return integer status
+ */
 int cmd_random(const cxxopts::ParseResult& result) {
     try
     {
         // Create API object and call the "random" endpoint
         Scryfall::ScryfallAPI api;
-        auto res = api.BasicSearch("random");
+        auto res = api.KwdSearch("random");
 
         // Check that object is not an error
         if (res->get_object_type() == "error")
@@ -83,6 +103,11 @@ int cmd_random(const cxxopts::ParseResult& result) {
     }
 }
 
+/**
+ * Definition of "id" subcommand
+ * @param result CLI arg object
+ * @return integer status
+ */
 int cmd_id(const cxxopts::ParseResult& result)
 {
     try
@@ -90,7 +115,7 @@ int cmd_id(const cxxopts::ParseResult& result)
         // Call the ID to the API
         // todo: Create a regex verification
         Scryfall::ScryfallAPI api;
-        auto res = api.BasicSearch(result["query"].as<std::string>());
+        auto res = api.KwdSearch(result["query"].as<std::string>());
 
         // Print out the name of the card
         auto card_res = Scryfall::ScryCast<Scryfall::ScryfallObject, Scryfall::ScryCard>(res);
@@ -106,9 +131,15 @@ int cmd_id(const cxxopts::ParseResult& result)
     }
 }
 
-
+/**
+ * Main entrypoint for CLI handling
+ * @param argc integer count of args in argv
+ * @param argv character array of arguments
+ * @return integer status
+ */
 int cli_handler (int argc, char * argv[])
 {
+    // TODO: This does not handle any errors
     // Create opts
     PARAM_OPTS.add_options()
         ("command", "Command to be run", cxxopts::value<std::string>())
@@ -121,5 +152,6 @@ int cli_handler (int argc, char * argv[])
     PARAM_OPTS.parse_positional({"command", "query"});
     auto cli_opts = PARAM_OPTS.parse(argc, argv);
 
+    // Run and return the status
     return (exec_handlers[cli_opts["command"].as<std::string>()])(cli_opts);
 }

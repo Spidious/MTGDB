@@ -392,14 +392,14 @@ namespace Scryfall
 		 * @param id basic search keywords: <Scryfall_ID>, random, random-rare, random-foil, random-art
 		 * @return Unique pointer to ScryfallObject or derived class
 		 */
-		std::unique_ptr<ScryfallObject> BasicSearch(const string& id);
+		std::unique_ptr<ScryfallObject> KwdSearch(const string& id);
 
 		/**
 		 * Scryfall
 		 * @param query
 		 * @return
 		 */
-		std::unique_ptr<ScryfallObject> AdvancedSearch(const string query);
+		std::unique_ptr<ScryfallObject> CardSearch(const string query);
 
 
 		/**

@@ -141,7 +141,7 @@ string ScryfallAPI::parse_query(vector<searchitem> queries) {
 	return parse_query(queries) + ((queries.size()) ? "+" : "") + parsed_query.str();
 }
 
-std::unique_ptr<ScryfallObject> ScryfallAPI::AdvancedSearch(const string query) {
+std::unique_ptr<ScryfallObject> ScryfallAPI::CardSearch(const string query) {
 	string api_res;
 	call_api(API_ENDPOINT_SEARCH + url_encode(query), &api_res);
 

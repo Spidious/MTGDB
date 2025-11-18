@@ -106,7 +106,7 @@ TEST(API, InvalidCard)
     // Create a new API object
     auto api = Scryfall::ScryfallAPI();
     // Call API for random name
-    api.AdvancedSearch(Scryfall::ScryfallAPI::parse_query({{"name", ":", "32lk432lk4h324h34l24k"}}));
+    api.CardSearch(Scryfall::ScryfallAPI::parse_query({{"name", ":", "32lk432lk4h324h34l24k"}}));
     auto res = api.GetResult();
     EXPECT_EQ(res["object"], "error");
     EXPECT_GE(res.getStatus(), 0);
