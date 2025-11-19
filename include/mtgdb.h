@@ -8,5 +8,9 @@
 #include <scryfall_api.h>
 #include <cxxopts.h>
 #include <cli_handler.h>
+#include <scrydb.h>
 
-// TODO: Reference additional headers your program requires here.
+// Tasklist for mtgdb project
+
+// 1. TODO: integer fail codes instead of catches for Scryfall
+// 2. TODO: Start Scryfall and DB connector

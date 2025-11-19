@@ -93,7 +93,7 @@ call_api(const string& path, const void* buffer)
 
 // Search Scryfall by it's ID
 std::unique_ptr<ScryfallObject> ScryfallAPI::
-BasicSearch(const string& id) {
+KwdSearch(const string& id) {
 	string api_res;
 	call_api(API_ENDPOINT_ID + id, &api_res);
 

@@ -4,6 +4,7 @@ add_library(mtgdb_lib
     scryfall_api.cpp
     sqlite3.c
     cli_handler.cpp
+    scrydb.cpp
 )
 
 target_include_directories(mtgdb_lib PUBLIC ${CMAKE_SOURCE_DIR}/include)
